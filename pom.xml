@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>nb</artifactId>
+    <groupId>efa.mvn</groupId>
+    <version>7.1.2</version>
+  </parent>
+
+  <groupId>efa</groupId>
+  <artifactId>util</artifactId>
+  <version>0.1.0</version>
+  <packaging>pom</packaging>
+
+  <name>util</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>efa.scala</groupId>
+      <artifactId>scalaW</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>efa.scala</groupId>
+      <artifactId>scalazW</artifactId>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>    
+      <dependency>
+        <groupId>efa.scala</groupId>
+        <artifactId>scalaW</artifactId>
+        <version>2.10.0</version>
+      </dependency>
+      <dependency>
+        <groupId>efa.scala</groupId>
+        <artifactId>scalaSwingW</artifactId>
+        <version>2.10.0</version>
+      </dependency>
+      <dependency>
+        <groupId>efa.scala</groupId>
+        <artifactId>scalazW</artifactId>
+        <version>7.0.0-M7</version>
+      </dependency>
+      <dependency>
+        <groupId>efa.scala</groupId>
+        <artifactId>scalaCheckW</artifactId>
+        <version>1.10.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>efa.react</groupId>
+        <artifactId>react-core</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+      <dependency>
+        <groupId>efa.react</groupId>
+        <artifactId>react-swing</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+    </dependencies>    
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>nbm-maven-plugin</artifactId>
+          <configuration>
+            <cluster>efaUtil</cluster>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <modules>
+    <module>core</module>
+    <module>io</module>
+    <module>nb</module>
+    <module>localDe</module>
+  </modules>
+
+  <properties>
+    <core.version>0.1.0</core.version>
+    <io.version>0.1.0</io.version>
+    <nb.version>0.1.2</nb.version>
+    <localDe.version>0.1.0</localDe.version>
+  </properties>
+</project>
+<!-- vim: set ts=2 sw=2 et: -->
