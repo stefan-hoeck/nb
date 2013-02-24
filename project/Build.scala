@@ -25,9 +25,12 @@ object Dependencies {
   val utilV = "0.2.1-SNAPSHOT"
   val reactV = "0.2.1-SNAPSHOT"
   val nbV = "RELEASE71"
-  val orgNb = "org.netbeans.api"
+  val scalazV = "7.0.0-M8"
+
+  val nb = "org.netbeans.api"
   val util = "efa"
   val react = "efa.react"
+  val scalaz = "org.scalaz"
 
   val scalaSwing = "org.scala-lang" % "scala-swing" % sv
 
@@ -39,42 +42,40 @@ object Dependencies {
 
   val react_swing = react %% "react-swing" % reactV changing
  
-  val nbAnnotations = orgNb % "org-netbeans-api-annotations-common" % nbV
-  val nbUtil = orgNb % "org-openide-util" % nbV
-  val nbLookup = orgNb % "org-openide-util-lookup" % nbV
-  val nbExplorer = orgNb % "org-openide-explorer" % nbV
-  val nbWindows = orgNb % "org-openide-windows" % nbV
-  val nbNodes = orgNb % "org-openide-nodes" % nbV
-  val nbFilesystems = orgNb % "org-openide-filesystems" % nbV
-  val nbLoaders = orgNb % "org-openide-loaders" % nbV
-  val nbModules = orgNb % "org-openide-modules" % nbV
-  val nbAwt = orgNb % "org-openide-awt" % nbV
-  val nbSettings = orgNb % "org-netbeans-modules-settings" % nbV
-  val nbActions = orgNb % "org-openide-actions" % nbV
-  val nbDialogs = orgNb % "org-openide-dialogs" % nbV
-  val nbOutline = orgNb % "org-netbeans-swing-outline" % nbV
-  val nbOptions = orgNb % "org-netbeans-modules-options-api" % nbV
-  val nbAutoupdateUi = orgNb % "org-netbeans-modules-autoupdate-ui" % nbV
-  val nbAutoupdateServices = orgNb % "org-netbeans-modules-autoupdate-services" % nbV
-  val nbModulesOptions = orgNb % "org-netbeans-modules-options-api" % nbV
+  val nbAnnotations = nb % "org-netbeans-api-annotations-common" % nbV
+  val nbUtil = nb % "org-openide-util" % nbV
+  val nbLookup = nb % "org-openide-util-lookup" % nbV
+  val nbExplorer = nb % "org-openide-explorer" % nbV
+  val nbWindows = nb % "org-openide-windows" % nbV
+  val nbNodes = nb % "org-openide-nodes" % nbV
+  val nbFilesystems = nb % "org-openide-filesystems" % nbV
+  val nbLoaders = nb % "org-openide-loaders" % nbV
+  val nbModules = nb % "org-openide-modules" % nbV
+  val nbAwt = nb % "org-openide-awt" % nbV
+  val nbSettings = nb % "org-netbeans-modules-settings" % nbV
+  val nbActions = nb % "org-openide-actions" % nbV
+  val nbDialogs = nb % "org-openide-dialogs" % nbV
+  val nbOutline = nb % "org-netbeans-swing-outline" % nbV
+  val nbOptions = nb % "org-netbeans-modules-options-api" % nbV
+  val nbAutoupdateUi = nb % "org-netbeans-modules-autoupdate-ui" % nbV
+  val nbAutoupdateServices = nb % "org-netbeans-modules-autoupdate-services" % nbV
+  val nbModulesOptions = nb % "org-netbeans-modules-options-api" % nbV
 
   val shapeless = "com.chuusai" %% "shapeless" % "1.2.3"
-  val scalaz_core = "org.scalaz" %% "scalaz-core" % "7.0.0-M8"
-  val scalaz_effect = "org.scalaz" %% "scalaz-effect" % "7.0.0-M8"
-  val scalaz_scalacheck = "org.scalaz" %% "scalaz-scalacheck-binding" % "7.0.0-M8"
+  val scalaz_core = scalaz %% "scalaz-core" % scalazV
+  val scalaz_effect = scalaz %% "scalaz-effect" % scalazV
 
-  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.10.0"
-  val scalacheckT = scalacheck % "test"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.10.0" % "test"
 
-  val coolness = Seq(scalaz_core, scalaz_effect, shapeless)
+  val coolness = Seq(scalaz_core, scalaz_effect, shapeless, scalacheck)
 }
 
 object UtilBuild extends Build {
   import Dependencies._
   import BuildSettings._
 
-  def addDeps (ds: Seq[ModuleID]) =
-    BuildSettings.buildSettings ++ Seq (libraryDependencies ++= ds)
+  def addDeps (ds: ModuleID*) =
+    BuildSettings.buildSettings ++ Seq(libraryDependencies ++= (coolness ++ ds))
 
   lazy val util = Project (
     "efa-nb-root",
@@ -85,18 +86,17 @@ object UtilBuild extends Build {
   lazy val nb = Project (
     "efa-nb",
     file("nb"),
-    settings = addDeps (coolness ++
-      Seq (nbUtil, nbLookup, nbDialogs, nbNodes, nbExplorer, nbModules,
-           nbOptions, nbFilesystems, nbLoaders, scalaSwing, react_core,
-           react_swing, efa_core, efa_io, scalacheckT
-         )
-       )
+    settings = addDeps (
+      nbUtil, nbLookup, nbDialogs, nbNodes, nbExplorer, nbModules,
+      nbOptions, nbFilesystems, nbLoaders, scalaSwing, react_core,
+      react_swing, efa_core, efa_io
+    )
   )
 
   lazy val localDe = Project (
-    "efa-localDe",
+    "efa-nb-localDe",
     file("localDe"),
-    settings = addDeps(scalacheckT +: coolness)
+    settings = addDeps()
   ) dependsOn(nb)
 }
 

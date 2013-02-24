@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>efa</groupId>
-    <artifactId>util</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <groupId>efa.nb</groupId>
+    <artifactId>efa-nb-root</artifactId>
+    <version>0.2.1</version>
   </parent>
 
-  <groupId>efa</groupId>
+  <groupId>efa.nb</groupId>
   <artifactId>efa-nb</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <packaging>nbm</packaging>
 
   <name>nb</name>
@@ -18,31 +18,25 @@
   <dependencies>
     <dependency>
       <groupId>efa</groupId>
-      <artifactId>efa-core</artifactId>
-      <version>${core.version}</version>
+      <artifactId>efa-core_2.10</artifactId>
     </dependency>
     <dependency>
       <groupId>efa</groupId>
-      <artifactId>efa-io</artifactId>
-      <version>${io.version}</version>
+      <artifactId>efa-io_2.10</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaSwingW</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaCheckW</artifactId>
+      <groupId>efa</groupId>
+      <artifactId>scalacheckw_2.10</artifactId>
     </dependency>
 
     <dependency>
       <groupId>efa.react</groupId>
-      <artifactId>react-core</artifactId>
+      <artifactId>react-core_2.10</artifactId>
     </dependency>
     <dependency>
       <groupId>efa.react</groupId>
-      <artifactId>react-swing</artifactId>
+      <artifactId>react-swing_2.10</artifactId>
     </dependency>
 
     <dependency>

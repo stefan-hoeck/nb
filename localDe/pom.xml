@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>efa.nb</groupId>
+    <artifactId>efa-nb-root</artifactId>
+    <version>0.2.1</version>
+  </parent>
+
+  <groupId>efa.nb</groupId>
+  <artifactId>efa-nb-localDe</artifactId>
+  <version>0.2.1-SNAPSHOT</version>
+  <packaging>nbm</packaging>
+
+  <name>localDe</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>efa</groupId>
+      <artifactId>efa-core_2.10</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>efa-nb</artifactId>
+      <version>${nb.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>nbm-maven-plugin</artifactId>
+        <configuration>
+          <publicPackages></publicPackages>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+<!-- vim: set ts=2 sw=2 et: -->
+

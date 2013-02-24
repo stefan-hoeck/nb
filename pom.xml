@@ -8,55 +8,102 @@
     <version>7.1.2</version>
   </parent>
 
-  <groupId>efa</groupId>
-  <artifactId>util</artifactId>
-  <version>0.1.0</version>
+  <groupId>efa.nb</groupId>
+  <artifactId>efa-nb-root</artifactId>
+  <version>0.2.1</version>
   <packaging>pom</packaging>
 
-  <name>util</name>
+  <name>nb root</name>
 
   <dependencies>
     <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaW</artifactId>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
     </dependency>
     <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalazW</artifactId>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-swing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.scalaz</groupId>
+      <artifactId>scalaz-core_2.10</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.scalaz</groupId>
+      <artifactId>scalaz-effect_2.10</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.scalaz</groupId>
+      <artifactId>scalaz-scalacheck-binding_2.10</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>efa</groupId>
+      <artifactId>shapelessw_2.10</artifactId>
     </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>    
       <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalaW</artifactId>
-        <version>2.10.0</version>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-library</artifactId>
+        <version>${scala.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalaSwingW</artifactId>
-        <version>2.10.0</version>
+        <groupId>org.scala-lang</groupId>
+        <artifactId>scala-swing</artifactId>
+        <version>${scala.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalazW</artifactId>
-        <version>7.0.0-M7</version>
+        <groupId>org.scalaz</groupId>
+        <artifactId>scalaz-core_2.10</artifactId>
+        <version>${scalaz.version}</version>
       </dependency>
       <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalaCheckW</artifactId>
+        <groupId>org.scalaz</groupId>
+        <artifactId>scalaz-effect_2.10</artifactId>
+        <version>${scalaz.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.scalaz</groupId>
+        <artifactId>scalaz-scalacheck-binding_2.10</artifactId>
+        <version>${scalaz.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>efa</groupId>
+        <artifactId>scalacheckw_2.10</artifactId>
         <version>1.10.0</version>
+      </dependency>
+      <dependency>
+        <groupId>efa</groupId>
+        <artifactId>testingw_2.10</artifactId>
+        <version>0.5.0</version>
+      </dependency>
+      <dependency>
+        <groupId>efa</groupId>
+        <artifactId>shapelessw_2.10</artifactId>
+        <version>1.2.3</version>
       </dependency>
 
       <dependency>
         <groupId>efa.react</groupId>
-        <artifactId>react-core</artifactId>
-        <version>0.1.0</version>
+        <artifactId>react-core_2.10</artifactId>
+        <version>${react.version}</version>
       </dependency>
       <dependency>
         <groupId>efa.react</groupId>
-        <artifactId>react-swing</artifactId>
-        <version>0.1.0</version>
+        <artifactId>react-swing_2.10</artifactId>
+        <version>${react.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>efa</groupId>
+        <artifactId>efa-core_2.10</artifactId>
+        <version>${util.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>efa</groupId>
+        <artifactId>efa-io_2.10</artifactId>
+        <version>${util.version}</version>
       </dependency>
     </dependencies>    
   </dependencyManagement>
@@ -67,7 +114,8 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>nbm-maven-plugin</artifactId>
           <configuration>
-            <cluster>efaUtil</cluster>
+            <cluster>efaNb</cluster>
+            <useOSGiDependencies>true</useOSGiDependencies>
           </configuration>
         </plugin>
       </plugins>
@@ -75,17 +123,17 @@
   </build>
 
   <modules>
-    <module>core</module>
-    <module>io</module>
     <module>nb</module>
     <module>localDe</module>
   </modules>
 
   <properties>
-    <core.version>0.1.0</core.version>
-    <io.version>0.1.0</io.version>
-    <nb.version>0.1.2</nb.version>
-    <localDe.version>0.1.0</localDe.version>
+    <scala.version>2.10.0</scala.version>
+    <scalaz.version>7.0.0-M8</scalaz.version>
+    <util.version>0.2.1-SNAPSHOT</util.version>
+    <react.version>0.2.1-SNAPSHOT</react.version>
+    <nb.version>0.2.1-SNAPSHOT</nb.version>
+    <localDe.version>0.2.1-SNAPSHOT</localDe.version>
   </properties>
 </project>
 <!-- vim: set ts=2 sw=2 et: -->
