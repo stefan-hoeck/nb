@@ -17,8 +17,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>efa</groupId>
-      <artifactId>efa-core_2.10</artifactId>
+      <groupId>efa.scala</groupId>
+      <artifactId>efaCoreW</artifactId>
     </dependency>
 
     <dependency>
