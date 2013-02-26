@@ -17,8 +17,51 @@
 
   <dependencies>
     <dependency>
-      <groupId>efa.scala</groupId>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaW</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaSwingW</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalazW</artifactId>
+      <version>${scalaz.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>shapelessW</artifactId>
+      <version>${shapeless.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaCheckW</artifactId>
+      <version>${scalacheck.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>reactW</artifactId>
+      <version>${react.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>reactSwingW</artifactId>
+      <version>${react.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>efa.nb</groupId>
       <artifactId>efaCoreW</artifactId>
+      <version>${util.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>efaIoW</artifactId>
+      <version>${util.version}</version>
     </dependency>
 
     <dependency>

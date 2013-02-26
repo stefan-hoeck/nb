@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>efa.nb</groupId>
+    <artifactId>efa-nb-root</artifactId>
+    <version>0.2.1</version>
+  </parent>
+
+  <groupId>efa.nb</groupId>
+  <artifactId>efaCoreW</artifactId>
+  <packaging>nbm</packaging>
+  <version>0.2.1-SNAPSHOT</version>
+
+  <name>Efa Core Wrapper</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>efa</groupId>
+      <artifactId>efa-core_2.10</artifactId>
+      <version>${util.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-core_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-effect_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-scalacheck-binding_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-typelevel_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-xml_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-concurrent_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalacheck</groupId>
+          <artifactId>scalacheck_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.chuusai</groupId>
+          <artifactId>shapeless_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.netbeans.api</groupId>
+          <artifactId>org-openide-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.netbeans.api</groupId>
+          <artifactId>org-openide-util-lookup</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaW</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalazW</artifactId>
+      <version>${scalaz.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>shapelessW</artifactId>
+      <version>${shapeless.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaCheckW</artifactId>
+      <version>${scalacheck.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-openide-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-openide-util-lookup</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>nbm-maven-plugin</artifactId>
+        <configuration>
+          <publicPackages>
+            <publicPackage>efa.core.*</publicPackage>
+          </publicPackages>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+<!-- vim: set ts=2 sw=2 et: -->
+
+

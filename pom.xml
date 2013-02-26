@@ -15,80 +15,6 @@
 
   <name>nb root</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaW</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaSwingW</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalazW</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>shapelessW</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>efa.scala</groupId>
-      <artifactId>scalaCheckW</artifactId>
-    </dependency>
-  </dependencies>
-
-  <dependencyManagement>
-    <dependencies>    
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalaW</artifactId>
-        <version>${scala.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalaSwingW</artifactId>
-        <version>${scala.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalazW</artifactId>
-        <version>${scalaz.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>shapelessW</artifactId>
-        <version>${shapeless.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>scalaCheckW</artifactId>
-        <version>${scalacheck.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>reactW</artifactId>
-        <version>${react.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>reactSwingW</artifactId>
-        <version>${react.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>efaCoreW</artifactId>
-        <version>${util.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>efa.scala</groupId>
-        <artifactId>efaIoW</artifactId>
-        <version>${util.version}</version>
-      </dependency>
-    </dependencies>    
-  </dependencyManagement>
   <build>
     <pluginManagement>
       <plugins>
@@ -104,11 +30,23 @@
   </build>
 
   <modules>
-    <module>nb</module>
+    <module>akkaW</module>
+    <module>efaCoreW</module>
+    <module>efaIoW</module>
+    <module>efaLocalDeW</module>
     <module>localDe</module>
+    <module>nb</module>
+    <module>reactSwingW</module>
+    <module>reactW</module>
+    <module>scalaCheckW</module>
+    <module>scalaSwingW</module>
+    <module>scalaW</module>
+    <module>scalazW</module>
+    <module>shapelessW</module>
   </modules>
 
   <properties>
+    <akka.version>2.1.0</akka.version>
     <scala.version>2.10.0</scala.version>
     <scalaz.version>7.0.0-M8</scalaz.version>
     <shapeless.version>1.2.3</shapeless.version>
