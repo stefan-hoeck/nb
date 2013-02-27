@@ -38,6 +38,10 @@
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-iteratee_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
           <artifactId>scalaz-scalacheck-binding_2.10</artifactId>
         </exclusion>
         <exclusion>
