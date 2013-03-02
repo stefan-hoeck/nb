@@ -6,7 +6,7 @@ import java.util.prefs.Preferences
 import org.openide.util.NbPreferences
 import scalaz._, Scalaz._, effect._
 
-trait PersistentComponent extends ValLogIOFunctions with ValLogIOInstances {
+trait PersistentComponent extends LogDisIOFunctions with LogDisIOInstances {
 
   final def read: IO[Unit] = {
     def doRead = for {
@@ -14,11 +14,11 @@ trait PersistentComponent extends ValLogIOFunctions with ValLogIOInstances {
       p ← prefs
       _ ← (p.get(prefId + "%s version", null) == version) ?
           readProps(p) |
-          nullValLogIO
-      _ ← liftIO (persistentChildren foldMap (_.read))
+          ldiUnit
+      _ ← liftIO(persistentChildren foldMap (_.read))
     } yield ()
 
-    logger >>= (_ logValZ doRead)
+    logger >>= (_ logDisZ doRead)
   }
 
   protected def logger: IO[LoggerIO] = efa.nb.pref.tcLogger
@@ -29,14 +29,14 @@ trait PersistentComponent extends ValLogIOFunctions with ValLogIOInstances {
 
   protected def version: String
   
-  protected def prefs: ValLogIO[Preferences] = {
+  protected def prefs: LogDisIO[Preferences] = {
     val res = liftIO (IO (NbPreferences.forModule(getClass)))
     except (res, _ ⇒ "Unable to load preferences for " + getClass)
   }
   
-  protected def readProps(prefs: Preferences): ValLogIO[Unit] = nullValLogIO
+  protected def readProps(prefs: Preferences): LogDisIO[Unit] = ldiUnit
   
-  protected def writeProps(prefs: Preferences): ValLogIO[Unit] = nullValLogIO
+  protected def writeProps(prefs: Preferences): LogDisIO[Unit] = ldiUnit
   
   final def persist: IO[Unit] = {
     def doPersist = for {
@@ -47,7 +47,7 @@ trait PersistentComponent extends ValLogIOFunctions with ValLogIOInstances {
       _ ← liftIO (persistentChildren foldMap (_.persist))
     } yield ()
 
-    logger >>= (_ logValZ doPersist)
+    logger >>= (_ logDisZ doPersist)
   }
 }
 

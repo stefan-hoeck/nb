@@ -24,11 +24,11 @@ trait PersistentOutline extends PersistentComponent {
   private[this] lazy val prefix = prefId + WithOutline.OutlineView
   
   override protected def writeProps(prefs: Preferences) = for {
-    rh ← liftIO (rowHeight)
-    _  ← point (prefs.putInt(prefId + RowHeight, rh))
-    ps ← point (new Properties)
-    _  ← point (outline.writeSettings(ps, prefix))
-    _  ← point (prefs.putByteArray(prefix, propsToArray(ps)))
+    rh ← liftIO(rowHeight)
+    _  ← point(prefs.putInt(prefId + RowHeight, rh))
+    ps ← point(new Properties)
+    _  ← point(outline.writeSettings(ps, prefix))
+    _  ← point(prefs.putByteArray(prefix, propsToArray(ps)))
   } yield ()
 
   override protected def readProps(prefs: Preferences) = for {
@@ -37,10 +37,10 @@ trait PersistentOutline extends PersistentComponent {
     _  ← try {
            val ps = propsFromArray(prefs.getByteArray(prefix, Array()))
            outline.readSettings(ps, prefix)
-           nullValLogIO 
+           ldiUnit 
          } catch {
            //do nothing, happens when no settings where stored
-           case e: NullPointerException ⇒ nullValLogIO
+           case e: NullPointerException ⇒ ldiUnit
            case e: Exception ⇒  warning (readError(e))
          }
   } yield ()
