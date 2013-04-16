@@ -23,12 +23,14 @@ object Dependencies {
   import BuildSettings.sv
 
   val utilV = "0.2.1-SNAPSHOT"
+  val direV = "0.1.0-SNAPSHOT"
   val reactV = "0.2.1-SNAPSHOT"
   val nbV = "RELEASE71"
   val scalazV = "7.0.0-RC2"
 
   val nb = "org.netbeans.api"
   val util = "efa"
+  val dire = "dire"
   val react = "efa.react"
   val scalaz = "org.scalaz"
 
@@ -38,9 +40,9 @@ object Dependencies {
 
   val efa_io = util %% "efa-io" % utilV changing
 
-  val react_core = react %% "react-core" % reactV changing
+  val dire_core = dire %% "dire-core" % direV changing
 
-  val react_swing = react %% "react-swing" % reactV changing
+  val dire_swing = dire %% "dire-swing" % direV changing
  
   val nbAnnotations = nb % "org-netbeans-api-annotations-common" % nbV
   val nbUtil = nb % "org-openide-util" % nbV
@@ -88,8 +90,8 @@ object UtilBuild extends Build {
     file("nb"),
     settings = addDeps (
       nbUtil, nbLookup, nbDialogs, nbNodes, nbExplorer, nbModules,
-      nbOptions, nbFilesystems, nbLoaders, scalaSwing, react_core,
-      react_swing, efa_core, efa_io
+      nbOptions, nbFilesystems, nbLoaders, scalaSwing, dire_core,
+      dire_swing, efa_core, efa_io
     )
   )
 

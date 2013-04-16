@@ -8,25 +8,21 @@
   </parent>
 
   <groupId>efa.nb</groupId>
-  <artifactId>reactSwingW</artifactId>
+  <artifactId>direW</artifactId>
   <packaging>nbm</packaging>
-  <version>0.2.1-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
 
-  <name>React Swing Wrapper</name>
+  <name>React Wrapper</name>
 
   <dependencies>
     <dependency>
-      <groupId>efa.react</groupId>
-      <artifactId>react-swing_2.10</artifactId>
-      <version>${react.version}</version>
+      <groupId>dire</groupId>
+      <artifactId>dire-core_2.10</artifactId>
+      <version>${dire.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.scala-lang</groupId>
           <artifactId>scala-library</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.scala-lang</groupId>
-          <artifactId>scala-swing</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
@@ -35,10 +31,6 @@
         <exclusion>
           <groupId>org.scalaz</groupId>
           <artifactId>scalaz-effect_2.10</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>efa.react</groupId>
-          <artifactId>react-core_2.10</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalacheck</groupId>
@@ -53,11 +45,6 @@
     </dependency>
     <dependency>
       <groupId>efa.nb</groupId>
-      <artifactId>scalaSwingW</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>efa.nb</groupId>
       <artifactId>scalazW</artifactId>
       <version>${scalaz.version}</version>
     </dependency>
@@ -65,11 +52,6 @@
       <groupId>efa.nb</groupId>
       <artifactId>scalaCheckW</artifactId>
       <version>${scalacheck.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>efa.nb</groupId>
-      <artifactId>reactW</artifactId>
-      <version>${react.version}</version>
     </dependency>
   </dependencies>
 
@@ -80,7 +62,7 @@
         <artifactId>nbm-maven-plugin</artifactId>
         <configuration>
           <publicPackages>
-            <publicPackage>efa.react.swing.*</publicPackage>
+            <publicPackage>dire.*</publicPackage>
           </publicPackages>
         </configuration>
       </plugin>
@@ -88,4 +70,3 @@
   </build>
 </project>
 <!-- vim: set ts=2 sw=2 et: -->
-

@@ -36,8 +36,8 @@
     <module>efaLocalDeW</module>
     <module>localDe</module>
     <module>nb</module>
-    <module>reactSwingW</module>
-    <module>reactW</module>
+    <module>direSwingW</module>
+    <module>direW</module>
     <module>scalaCheckW</module>
     <module>scalaSwingW</module>
     <module>scalaW</module>
@@ -52,7 +52,7 @@
     <shapeless.version>1.2.3</shapeless.version>
     <scalacheck.version>1.10.0</scalacheck.version>
     <util.version>0.2.1-SNAPSHOT</util.version>
-    <react.version>0.2.1-SNAPSHOT</react.version>
+    <dire.version>0.1.0-SNAPSHOT</dire.version>
     <nb.version>0.2.1-SNAPSHOT</nb.version>
     <localDe.version>0.2.1-SNAPSHOT</localDe.version>
   </properties>
