@@ -11,9 +11,6 @@ package object nb {
   private[nb] lazy val pref =
     efa.core.Service.unique[TcPreferences] (TcPreferences)
 
-//  type VSIn[+A] = SIn[ValRes[A]]
-//  type ValEET[A,B] = EET[A,ValRes[B]]
-//  type ValSET[A,B] = SET[A,ValRes[B]]
 //  type StSET[A,B] = SET[A,State[B,Unit]]
 //  type VSET[A,B] = SET[A,ValRes[State[B,Unit]]]
 }
