@@ -12,7 +12,7 @@ trait PersistentOutline extends PersistentComponent {
 
   final protected def rowHeight = IO (outline.getOutline.getRowHeight)
 
-  final protected def rowHeightSet (rh: Int) =
+  final protected def rowHeightSet(rh: Int) =
     IO (outline.getOutline.setRowHeight(rh))
 
   final protected def enlarge: IO[Unit] =
@@ -41,18 +41,18 @@ trait PersistentOutline extends PersistentComponent {
          } catch {
            //do nothing, happens when no settings where stored
            case e: NullPointerException ⇒ ldiUnit
-           case e: Exception ⇒  warning (readError(e))
+           case e: Exception ⇒  warning(readError(e))
          }
   } yield ()
 
-  private def readError (e: Exception) = 
+  private def readError(e: Exception) = 
     "Error when reading props for %s: %s" format (prefId, e.toString)
 }
 
 object PersistentOutline {
   import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
 
-  private def propsToArray (ps: Properties): Array[Byte] = {
+  private def propsToArray(ps: Properties): Array[Byte] = {
     val os = new ByteArrayOutputStream
 
     ps.store(os, "")
