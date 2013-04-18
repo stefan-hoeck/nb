@@ -27,7 +27,9 @@ abstract class EfaTc extends TopComponent with PersistentComponent {
 }
 
 object EfaTc {
-  private[this] val reg = new ArrayBuffer[EfaTc] with SynchronizedBuffer[EfaTc]
+  private[this] val reg =
+    new ArrayBuffer[EfaTc] with SynchronizedBuffer[EfaTc]
+
   private[tc] def registry: IO[List[EfaTc]] = IO(reg.toList)
 
   private def add(tc: EfaTc) = IO(reg += tc)

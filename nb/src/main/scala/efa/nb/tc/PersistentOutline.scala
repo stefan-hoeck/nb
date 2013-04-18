@@ -7,24 +7,15 @@ import scala.collection.JavaConversions._
 import scalaz._, Scalaz._, effect._
 
 trait PersistentOutline extends PersistentComponent {
-  import WithOutline._, PersistentOutline._
-  protected def outline: OutlineView
+  import PersistentOutline._, OutlineNb._
+  protected def outlineNb: OutlineNb
 
-  final protected def rowHeight = IO (outline.getOutline.getRowHeight)
-
-  final protected def rowHeightSet(rh: Int) =
-    IO (outline.getOutline.setRowHeight(rh))
-
-  final protected def enlarge: IO[Unit] =
-    rowHeight >>= (rh ⇒ rowHeightSet((rh + Step) min MaxRowHeight))
-
-  final protected def reduce: IO[Unit] =
-    rowHeight >>= (rh ⇒ rowHeightSet((rh - Step) max MinRowHeight))
+  private def outline = outlineNb.peer
   
-  private[this] lazy val prefix = prefId + WithOutline.OutlineView
+  private[this] lazy val prefix = prefId + OutlineNb.OutlineView
   
   override protected def writeProps(prefs: Preferences) = for {
-    rh ← liftIO(rowHeight)
+    rh ← liftIO(outlineNb.rowHeight)
     _  ← point(prefs.putInt(prefId + RowHeight, rh))
     ps ← point(new Properties)
     _  ← point(outline.writeSettings(ps, prefix))
@@ -33,7 +24,7 @@ trait PersistentOutline extends PersistentComponent {
 
   override protected def readProps(prefs: Preferences) = for {
     rh ← point (prefs.getInt(prefId + RowHeight, MinRowHeight))
-    _  ← liftIO(rowHeightSet(rh))
+    _  ← liftIO(outlineNb rowHeightSet rh)
     _  ← try {
            val ps = propsFromArray(prefs.getByteArray(prefix, Array()))
            outline.readSettings(ps, prefix)

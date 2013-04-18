@@ -1,42 +1,55 @@
 package efa.nb.tc
 
-//import java.awt.{BorderLayout}
-//import javax.swing.JPanel
-//import org.openide.explorer.{ExplorerManager, ExplorerUtils}
-//import efa.core.Localization
-//import org.openide.explorer.view.OutlineView
-//import org.openide.nodes.Node
-//import org.openide.util.Lookup
-//import scala.language.reflectiveCalls
-//import scala.swing.Panel
-//
-//abstract class OutlinePanel extends Panel with Lookup.Provider{
-//  protected def rootNode: Node
-//
-//  protected def mainColumnName = efa.core.loc.name
-//
-//  protected def localizations: List[Localization]
-//
-//  final protected def ov = peer.ov
-//  
-//  override lazy val peer =
-//    new JPanel with Lookup.Provider with ExplorerManager.Provider {
-//      val ov = new OutlineView(mainColumnName)
-//      ov.setEnabled(true)
-//      ov.getOutline.setRootVisible(false)
-//      WithOutline.adjustLocalization(ov, localizations)
-//      private val mgr = new ExplorerManager
-//      private[this] val am = getActionMap
-//      am.put("delete", ExplorerUtils.actionDelete(mgr, true))
-//      private val lkp = ExplorerUtils.createLookup(mgr, am)
-//      mgr.setRootContext(rootNode)
-//      setLayout(new BorderLayout)
-//      add(ov, BorderLayout.CENTER)
-//      override def getExplorerManager = mgr
-//      override def getLookup = lkp
-//    }
-//
-//  override def getLookup = peer.getLookup
-//}
+import dire.swing.{Elem, AsSingleElem}
+import efa.core.Localization
+import java.awt.BorderLayout
+import javax.swing.JPanel
+import org.openide.explorer.{ExplorerManager, ExplorerUtils}
+import org.openide.explorer.view.OutlineView
+import org.openide.nodes.Node
+import org.openide.util.Lookup
+import scalaz.effect.IO
+
+case class OutlinePanel(peer: OutlinePanel.OutlinePanelPeer)
+  extends Lookup.Provider {
+
+  def outlineNb: OutlineNb = peer.outlineNb
+
+  def outlineView: OutlineView = outlineNb.peer
+
+  def outline = outlineView.getOutline
+
+  def getLookup = peer.getLookup
+}
+
+object OutlinePanel {
+
+  def apply(rootNode: Node,
+            localizations: List[Localization] = Nil,
+            mainColumnName: String = efa.core.loc.name,
+            rootVisible: Boolean = false): IO[OutlinePanel] = for {
+      onb ← OutlineNb(localizations, mainColumnName, rootVisible)
+      p   ← IO(new OutlinePanelPeer(onb, rootNode))
+    } yield OutlinePanel(p)
+
+  implicit val OutlinePanelElem: AsSingleElem[OutlinePanel] =
+    Elem vhFill { _.peer }
+
+  final class OutlinePanelPeer private[tc](
+      val outlineNb: OutlineNb,
+      rootNode: Node)
+    extends JPanel with ExplorerManager.Provider with Lookup.Provider {
+
+    private val mgr = new ExplorerManager
+    val actionMap = getActionMap
+    override lazy val getLookup = ExplorerUtils.createLookup(mgr, actionMap)
+    actionMap.put("delete", ExplorerUtils.actionDelete(mgr, true))
+    mgr.setRootContext(rootNode)
+    setLayout(new BorderLayout)
+    add(outlineNb.peer, BorderLayout.CENTER)
+
+    override def getExplorerManager = mgr
+  }
+}
 
 // vim: set ts=2 sw=2 et:
