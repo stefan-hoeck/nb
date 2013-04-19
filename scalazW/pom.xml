@@ -4,13 +4,13 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
   </parent>
 
   <groupId>efa.nb</groupId>
   <artifactId>scalazW</artifactId>
   <packaging>nbm</packaging>
-  <version>7.0.0-M8</version>
+  <version>7.0.0-RC2</version>
 
   <name>Scalaz Wrapper</name>
 
@@ -63,6 +63,21 @@
     <dependency>
       <groupId>org.scalaz</groupId>
       <artifactId>scalaz-scalacheck-binding_2.10</artifactId>
+      <version>${scalaz.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalacheck</groupId>
+          <artifactId>scalacheck_2.10</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.scalaz</groupId>
+      <artifactId>scalaz-concurrent_2.10</artifactId>
       <version>${scalaz.version}</version>
       <exclusions>
         <exclusion>

@@ -10,7 +10,7 @@
 
   <groupId>efa.nb</groupId>
   <artifactId>efa-nb-root</artifactId>
-  <version>0.2.1</version>
+  <version>0.3.0</version>
   <packaging>pom</packaging>
 
   <name>nb root</name>
@@ -39,6 +39,7 @@
     <module>direSwingW</module>
     <module>direW</module>
     <module>scalaCheckW</module>
+    <module>scalaReflectW</module>
     <module>scalaSwingW</module>
     <module>scalaW</module>
     <module>scalazW</module>
@@ -47,14 +48,14 @@
 
   <properties>
     <akka.version>2.1.0</akka.version>
-    <scala.version>2.10.0</scala.version>
-    <scalaz.version>7.0.0-M8</scalaz.version>
+    <scala.version>2.10.1</scala.version>
+    <scalaz.version>7.0.0-RC2</scalaz.version>
     <shapeless.version>1.2.3</shapeless.version>
     <scalacheck.version>1.10.0</scalacheck.version>
     <util.version>0.2.1-SNAPSHOT</util.version>
     <dire.version>0.1.0-SNAPSHOT</dire.version>
-    <nb.version>0.2.1-SNAPSHOT</nb.version>
-    <localDe.version>0.2.1-SNAPSHOT</localDe.version>
+    <nb.version>0.3.0-SNAPSHOT</nb.version>
+    <localDe.version>0.3.0-SNAPSHOT</localDe.version>
   </properties>
 </project>
 <!-- vim: set ts=2 sw=2 et: -->
