@@ -1,27 +1,24 @@
 package efa.nb
 
-//import efa.core._, Efa._
-//import efa.react.{SET, Out, sTrans, eTrans}
-//import efa.react.swing.AllFunctions._
-//import scala.swing._
-//import scalaz._, Scalaz._
-//
-//trait InputWidgets extends InputWidgetsFunctions
-//
-//trait InputWidgetsFunctions {
+import dire.{SF, Out, ValidationFunctions}
+import dire.swing._
+import efa.core._, Efa._
+import scalaz._, Scalaz._
+
+trait WidgetsFunctions extends ValidationFunctions {
 //
 //  def checkBox[A] (b: CheckBox)(l: A @> Boolean): VSET[A,A] =
 //    lensed(values(b) >=> success)(l)
 //
 //  def comboBox[A,B] (b: ComboBox[B])(l: A @> B): VSET[A,A] =
 //    lensed(values(b) >=> success)(l)
-//
-//  def getSet[A,B,C] (get: A ⇒ C)(set: (A, C) ⇒ ValSt[B], in: ValSET[C,C])
-//    : VSET[A,B] = {
-//    def vset (a: A, vi: ValRes[C]) = vi flatMap (set(a, _))
-//
-//    (in ∙ get) uponOut vset
-//  }
+
+  def getSet[A,B,C](get: A ⇒ C)(set: (A, C) ⇒ ValSt[B], in: SfV[C,C])
+    : VStSF[A,B] = {
+    def vset (a: A, vi: ValRes[C]) = vi flatMap (set(a, _))
+
+    SF.id[A].upon(in ∙ get)(vset)
+  }
 //
 //  def intIn[A](
 //    t: TextField,
@@ -46,24 +43,16 @@ package efa.nb
 //    v: EndoVal[Long] = Validators.dummy[Long]
 //  )(l: A @> Long): VSET[A,A] = textIn[A,Long](t, v = v)(l)
 //
-//  def outOnly[A] (o: Out[A]): SET[A,Nothing] =
-//    (sTrans.id[A] to o) >|> eTrans.never
-//
 //  def readVals[A:Read](
 //    t: TextField,
 //    f: A ⇒ String = (a: A) ⇒ a.toString
 //  ): ValSET[A,A] = 
 //    values(t) andThen validate(Read[A].validator) contramap f
 //
-//  def revalidate[A,B](v: Validator[A,B]): ValEET[ValRes[A],B] =
-//    eTrans.id[ValRes[A]] map (_ flatMap (v run _ validation))
-//
 //  def stringIn[A](
 //    t: TextField,
 //    v: EndoVal[String] = Validators.dummy[String]
 //  )(l: A @> String): VSET[A,A] = textIn[A,String](t, v = v)(l)
-//
-//  def success[A]: ValEET[A,A] = validate(Validators.dummy)
 //
 //  def textIn[A,B:Read](
 //    t: TextField,
@@ -71,11 +60,8 @@ package efa.nb
 //    str: B ⇒ String = (b: B) ⇒ b.toString
 //  )(l: A @> B): VSET[A,A] =
 //    lensed(readVals(t, str) andThen revalidate(v))(l)
-//
-//  def validate[A,B](v: Validator[A,B]): ValEET[A,B] =
-//    eTrans.id[A] map (v run _ validation)
-//}
-//
-//object InputWidgets extends InputWidgets
+}
+
+object Widgets extends WidgetsFunctions
 
 // vim: set ts=2 sw=2 et:

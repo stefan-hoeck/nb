@@ -1,19 +1,19 @@
 package efa
 
+import dire.SF
 import dire.control.ReactiveSystem
-import efa.core.ValRes
+import efa.core.{ValRes, Service}
 import efa.nb.spi.{NbLoc, TcPreferences}
 import scalaz.State
 
 package object nb {
+  type StSF[A,B] = SF[A,State[B,Unit]]
 
-  lazy val loc = efa.core.Service.unique[NbLoc] (NbLoc)
+  type VStSF[A,B] = SF[A,ValRes[State[B,Unit]]]
 
-  private[nb] lazy val pref =
-    efa.core.Service.unique[TcPreferences] (TcPreferences)
+  lazy val loc = Service.unique[NbLoc](NbLoc)
 
-//  type StSET[A,B] = SET[A,State[B,Unit]]
-//  type VSET[A,B] = SET[A,ValRes[State[B,Unit]]]
+  private[nb] lazy val pref = Service.unique[TcPreferences](TcPreferences)
 
   lazy val NbSystem = ReactiveSystem().unsafePerformIO()
 
