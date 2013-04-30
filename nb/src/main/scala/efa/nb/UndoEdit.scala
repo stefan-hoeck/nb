@@ -1,17 +1,17 @@
 package efa.nb
 
 //import efa.react._
-//import org.openide.awt.UndoRedo
-//import javax.swing.event.UndoableEditEvent
-//import javax.swing.undo.AbstractUndoableEdit
-//import scalaz._, Scalaz._, effect.IO
-//
-//case class UndoEdit (un: IO[Unit], re: IO[Unit])
-//   extends AbstractUndoableEdit {
-//  override def undo() {super.undo(); un.unsafePerformIO}
-//  override def redo() {super.redo(); re.unsafePerformIO}
-//}
-//
+import org.openide.awt.UndoRedo
+import javax.swing.event.UndoableEditEvent
+import javax.swing.undo.AbstractUndoableEdit
+import scalaz._, Scalaz._, effect.IO
+
+case class UndoEdit (un: IO[Unit], re: IO[Unit])
+   extends AbstractUndoableEdit {
+  override def undo() {super.undo(); un.unsafePerformIO}
+  override def redo() {super.redo(); re.unsafePerformIO}
+}
+
 //object UndoEdit extends IOCFunctions {
 //  def pairs[A]: SET[A,(A,A)] =
 //    sTrans.id[A].fpair reduce ((a,b) ⇒ (a._1,b._1)) events

@@ -1,7 +1,7 @@
 package efa.nb.tc
 
 import dire.{SIn, SF, DataSource}
-import dire.swing.{Wrapped, Elem, AsSingleElem}
+import dire.swing.{Elem, AsSingleElem}
 import efa.core.Localization
 import javax.swing.event.{TableColumnModelListener ⇒ TCML,
                           TableColumnModelEvent,
@@ -10,7 +10,7 @@ import org.openide.explorer.view.OutlineView
 import org.openide.nodes.Node
 import scalaz._, Scalaz._, scalaz.effect.IO
 
-case class OutlineNb(peer: OutlineView) extends Wrapped[OutlineView] {
+case class OutlineNb(peer: OutlineView) {
   import OutlineNb._
 
   def outline = peer.getOutline
