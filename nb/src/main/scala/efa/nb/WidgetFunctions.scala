@@ -28,8 +28,9 @@ trait WidgetsFunctions extends ValidationFunctions {
   }
 
   def readShow[A:Read:Show](sf: SF[String,String]): SfV[A,A] =
-    sf map Read[A].read contramap { _.shows } 
+    sf andThen read[A] contramap { _.shows } 
 
+  def read[A:Read]: SfV[String,A] = SF.id map Read[A].read
 }
 
 object Widgets extends WidgetsFunctions
