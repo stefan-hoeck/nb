@@ -5,7 +5,7 @@ import dire.swing._
 import efa.core._, Efa._
 import scalaz._, Scalaz._
 
-trait WidgetsFunctions extends ValidationFunctions {
+trait WidgetFunctions extends ValidationFunctions {
 
   def getSet[A,B,C](get: A ⇒ C)(set: (A,C) ⇒ ValSt[B], in: SfV[C,C])
     : VStSF[A,B] =
@@ -33,6 +33,6 @@ trait WidgetsFunctions extends ValidationFunctions {
   def read[A:Read]: SfV[String,A] = SF.id map Read[A].read
 }
 
-object Widgets extends WidgetsFunctions
+object Widgets extends WidgetFunctions
 
 // vim: set ts=2 sw=2 et:

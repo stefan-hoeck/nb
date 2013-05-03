@@ -2,14 +2,14 @@ package efa
 
 import dire.SF
 import dire.control.ReactiveSystem
-import efa.core.{ValRes, Service}
+import efa.core.{ValRes, Service, ValSt}
 import efa.nb.spi.{NbLoc, TcPreferences}
 import scalaz.State
 
 package object nb {
   type StSF[A,B] = SF[A,State[B,Unit]]
 
-  type VStSF[A,B] = SF[A,ValRes[State[B,Unit]]]
+  type VStSF[A,B] = SF[A,ValSt[B]]
 
   lazy val loc = Service.unique[NbLoc](NbLoc)
 
