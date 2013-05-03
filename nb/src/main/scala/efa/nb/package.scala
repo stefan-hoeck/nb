@@ -16,8 +16,6 @@ package object nb {
   private[nb] lazy val pref = Service.unique[TcPreferences](TcPreferences)
 
   lazy val NbSystem = ReactiveSystem().unsafePerformIO()
-
-  val swingS = Some(scalaz.concurrent.Strategy.SwingInvokeLater)
 }
 
 // vim: set ts=2 sw=2 et:

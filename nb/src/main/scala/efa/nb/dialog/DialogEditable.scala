@@ -1,8 +1,8 @@
 package efa.nb.dialog
 
 import efa.core._
-import efa.nb.{loc, NbSystem, swingS}
-import dire._
+import efa.nb.{loc, NbSystem}
+import dire._, dire.swing.{SwingStrategy, swingSink}
 import javax.swing.JDialog
 import org.openide.{DialogDisplayer, DialogDescriptor, NotifyDescriptor}
 import scalaz._, Scalaz._, effect.IO
@@ -50,7 +50,7 @@ trait DialogEditable[-A,+B] {
 
   final def create(a: A): IO[Option[B]] = editDialog(newTitle(a), a, true)
 
-  lazy val sf: SF[A,B] = SF sfIO (edit, swingS) collectO identity
+  lazy val sf: SF[A,B] = SF sfIO (edit, SwingStrategy) collectO identity
 }
 
 object DialogEditable {
@@ -74,7 +74,7 @@ object DialogEditable {
       desc.getNotificationLineSupport.setErrorMessage(n.head)
     }
 
-    DataSink.create(_ fold (msg, valid), strategy = swingS)
+    swingSink(_ fold (msg, valid))
   }
 }
 
