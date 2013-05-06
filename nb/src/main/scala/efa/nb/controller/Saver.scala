@@ -1,36 +1,32 @@
 package efa.nb.controller
 
+import dire._
+import dire.swing.SwingStrategy
 import dire.control.Var
 import org.netbeans.spi.actions.AbstractSavable 
-//import efa.react.{Source, EET, RTrans, IOCFunctions}
-import scalaz.syntax.monad._
-import scalaz.effect.{IO, IORef}
+import scalaz._, Scalaz._, effect.{IO, IORef}
 
 class Saver private (
-  private val src: Var[Option[SaveEvent]],
+  private val src: Var[Option[Unit]],
   override val findDisplayName: String,
-  perform: IORef[IO[Unit]],
   registered: IORef[Boolean]
 ) extends AbstractSavable {
   private lazy val obj = new Object{}
 
-  private def doRegister: IO[Unit] = 
-    IO(register()) >>
-    registered.write(true) >>
-    (src put Some(Registered(this)))
+  private def doRegister(b: Boolean): IO[Unit] = for {
+    reg ← registered.read
+    _   ← registered write b
+    _   ← if (b ≟ reg) IO.ioUnit
+          else (b ? IO(register()) | IO(unregister()))
+  } yield ()
 
-  private def doUnregister: IO[Unit] =
-    IO(unregister()) >>
-    registered.write(false) >>
-    (src put Some(Unregistered(this)))
+  def sink: DataSink[Boolean] =
+    DataSink.create(doRegister, IO.ioUnit, SwingStrategy)
 
-  def fire(io: IO[Unit]): IO[Unit] = 
-    perform.write(io) >> registered.read.ifM (IO.ioUnit, doRegister)
+  private def doSave: IO[Unit] =
+    registered.read.ifM(src.put(().some) >> doRegister(false), IO.ioUnit)
 
-  override def handleSave() {
-    perform.read.μ >>
-    registered.read.ifM(doUnregister, IO.ioUnit) unsafePerformIO
-  }
+  override def handleSave() { doSave.unsafePerformIO() }
 
   override def equals(other: Any) = other match {
     case s: Saver ⇒ s.obj == obj
@@ -41,18 +37,10 @@ class Saver private (
 }
 
 object Saver {
-//  def events (name: String): EET[IO[Unit],SaveEvent] = RTrans(es ⇒
-//    for {
-//      s ← liftIO (apply(name))
-//      _ ← es --> s.fire
-//    } yield s.src
-//  )
-
-  private def apply (name: String): IO[Saver] = for {
-    src ← Var.newVar[Option[SaveEvent]](None)
-    per ← IO newIORef IO.ioUnit
+  private def apply(name: String): IO[Saver] = for {
+    src ← Var newVar none[Unit]
     reg ← IO newIORef false
-  } yield new Saver(src, name, per, reg)
+  } yield new Saver(src, name, reg)
 }
 
 // vim: set ts=2 sw=2 et:
