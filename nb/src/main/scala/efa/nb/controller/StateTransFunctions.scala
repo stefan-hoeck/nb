@@ -1,6 +1,6 @@
 package efa.nb.controller
 
-import dire._, SF.{id, sfIO, const}
+import dire._, SF.{id, sfIO, const, loop}
 import dire.swing.UndoEdit
 import efa.core.{ValRes, ValSt}
 import efa.io.LoggerIO
@@ -54,9 +54,11 @@ trait StateTransFunctions {
     calcSF andThen ui collectO valStToInput
   }
 
-  def uiInIsolated[Raw](ui: SF[Raw,ValSt[Raw]])
-    : SF[Raw \/ Raw, Input[Raw]] =
+  def uiInIsolated[Raw](ui: SF[Raw,ValSt[Raw]]): SF[Raw \/ Raw, Input[Raw]] =
     uiIn(const(0))(ui)((r,_) ⇒ r)
+
+  def uiLoop[A](sf: SF[A \/ A, A \/ A]): SIn[A] = loop(sf) map fold[A] in
+    
 
   def undoIn[A](out: Out[UndoEdit]): SF[A \/ A, Input[A]] =
     UndoEdit sf out map undoToInput[A]
