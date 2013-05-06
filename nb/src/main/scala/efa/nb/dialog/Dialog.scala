@@ -1,12 +1,12 @@
 package efa.nb.dialog
 
-import scalaz.Scalaz._, scalaz.effect._
+import dire.DataSink
+import dire.swing.{SwingStrategy, Elem}
 import org.openide.{DialogDisplayer, NotifyDescriptor}
-import scala.swing.{Component, BorderPanel}
-import scala.swing.BorderPanel.Position
-import dire.swing.Elem
+import scalaz.Scalaz._, scalaz.effect.IO
 
 sealed trait Dialog {
+  self ⇒ 
   
   final def msg(msg: String, title: String = ""): IO[Boolean] =
     displayMessage(msg, title)
@@ -15,6 +15,9 @@ sealed trait Dialog {
     p ← msg.panel
     b ← displayMessage(p.peer, title)
   } yield b
+
+  final val sink: DataSink[String] = 
+    DataSink.cached(msg(_).void, self, IO.ioUnit, SwingStrategy)
   
   /**
    * Displays the message object in a modal dialog
