@@ -3,44 +3,37 @@ package efa.nb.controller
 import dire._
 import dire.swing.SwingStrategy
 import dire.control.Var
-import org.netbeans.spi.actions.AbstractSavable 
-import scalaz._, Scalaz._, effect.{IO, IORef}
+import dire.util.save.{SaveOut, withHandler}
+import org.netbeans.spi.actions.AbstractSavable
+import org.netbeans.api.actions.Savable
+import scalaz._, Scalaz._, effect.IO
 
-class Saver private (
-  private val src: Var[Option[Unit]],
-  override val findDisplayName: String,
-  registered: IORef[Boolean]
+private[controller] final class Saver (
+  val si: SavableInfo, safe: IO[Unit]
 ) extends AbstractSavable {
-  private lazy val obj = new Object{}
-
-  private def doRegister(b: Boolean): IO[Unit] = for {
-    reg ← registered.read
-    _   ← registered write b
-    _   ← if (b ≟ reg) IO.ioUnit
-          else (b ? IO(register()) | IO(unregister()))
-  } yield ()
-
-  def sink: DataSink[Boolean] =
-    DataSink.create(doRegister, IO.ioUnit, SwingStrategy)
-
-  private def doSave: IO[Unit] =
-    registered.read.ifM(src.put(().some) >> doRegister(false), IO.ioUnit)
-
-  override def handleSave() { doSave.unsafePerformIO() }
-
-  override def equals(other: Any) = other match {
-    case s: Saver ⇒ s.obj == obj
-    case _ ⇒ false
-  }
-
-  override def hashCode = obj.hashCode
+  def reg(b: Boolean) = IO(b ? register() | unregister())
+  override def findDisplayName = si.name
+  override def handleSave() { safe.unsafePerformIO() }
+  override def hashCode = si.key.hashCode
+  override def equals(o: Any) =
+    o match { case s: Saver ⇒ s.si.key == si.key; case _ ⇒ false }
 }
 
 object Saver {
-  private def apply(name: String): IO[Saver] = for {
-    src ← Var newVar none[Unit]
-    reg ← IO newIORef false
-  } yield new Saver(src, name, reg)
+  def sf[A:Equal](si: SavableInfo, save: Out[A]): SF[A, SaveOut[A]] = {
+      def create(s: IO[Unit], reg: Boolean) = for {
+        s ← IO(new Saver(si, s))
+        _ ← s reg reg
+        _ ← si register (if (reg) s.right else s.left)
+      } yield ()
+      
+      def connect(o: Out[Unit]): Out[SaveOut[A]] = _ match {
+        case (s, oa@Some(a)) if s ≠ oa ⇒ create(save(a) >>= o, true)
+        case _                         ⇒ create(IO.ioUnit, false)
+      }
+
+      withHandler(SF.connectOuts(connect, SwingStrategy))
+    }
 }
 
 // vim: set ts=2 sw=2 et:
