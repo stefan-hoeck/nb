@@ -1,11 +1,13 @@
 package efa.nb
 
-import dire.{SF, Out, ValidationFunctions}
+import dire.{SF, Out}
 import dire.swing._
 import efa.core._, Efa._
 import scalaz._, Scalaz._
 
-trait WidgetFunctions extends ValidationFunctions {
+trait WidgetFunctions
+  extends dire.ValidationFunctions
+  with dire.ValidationInstances {
 
   def getSet[A,B,C](get: A ⇒ C)(set: (A,C) ⇒ ValSt[B], in: SfV[C,C])
     : VStSF[A,B] =
