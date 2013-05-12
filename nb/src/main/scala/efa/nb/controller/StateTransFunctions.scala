@@ -61,7 +61,7 @@ trait StateTransFunctions {
     
 
   def undoIn[A](out: Out[UndoEdit]): SF[A \/ A, Input[A]] =
-    UndoEdit sf out map undoToInput[A]
+    dire.swing.undo sf out map undoToInput[A]
 
   def undoToInput[A](a: A): Input[A] = _ ⇒ a.left
 
