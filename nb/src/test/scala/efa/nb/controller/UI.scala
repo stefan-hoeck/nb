@@ -1,70 +1,60 @@
 package efa.nb.controller
 
-//import efa.core.ValSt
-//import efa.nb.UndoEdit
-//import efa.react._
-//import scalaz._, Scalaz._, effect._
-//
-//case class UI[A] (
-//  actual: IORef[A],
-//  in: Source[ValSt[A]],
-//  undos: IORef[List[UndoEdit]],
-//  redos: IORef[List[UndoEdit]]
-//) {
-//  def get: IO[A] = actual.read
-//
-//  def set (a: A): IO[Unit] = in fire put(a).success
-//
-//  def mod (f: A ⇒ A): IO[Unit] = in fire modify(f).success
-//
-//  def fail (s: String): IO[Unit] = in fire s.failNel
-//
-//  def undoOut (e: UndoEdit): IO[Unit] =
-//    undos mod (e :: _) void
-//
-//  def undo: IO[Unit] = for {
-//    us ← undos.read
-//    _  ← us.headOption map (u ⇒ for {
-//           _ ← u.un
-//           _ ← undos mod (_.tail)
-//           _ ← redos mod (u :: _)
-//         } yield ()) orZero
-//  } yield ()
-//
-//  def redo: IO[Unit] = for {
-//    rs ← redos.read
-//    _  ← rs.headOption map (r ⇒ for {
-//           _ ← r.re
-//           _ ← redos mod (_.tail)
-//           _ ← undos mod (r :: _)
-//         } yield ()) orZero
-//  } yield ()
-//
-//  def stTrans: SET[A,ValSt[A]] =
-//    (sTrans.id[A] to display) >|> eTrans.inIO(IO(in))
-//
-//  def display (a: A): IO[Unit] = actual write a
-//}
-//
-//object UI {
-//  import StateTrans._
-//
-//  def apply[A] (a: A): IO[UI[A]] = for {
-//    act ← IO newIORef a
-//    src ← Events.src[ValSt[A]]
-//    un  ← IO newIORef List[UndoEdit]()
-//    re  ← IO newIORef List[UndoEdit]()
-//  } yield UI(act, src, un, re)
-//
-//  def basicIn[A] (a: A): IO[UI[A]] = for {
-//    ui ← UI(a)
-//    _  ← StateTrans.basicIn(ui.stTrans)(IO(a)) go
-//  } yield ui
-//
-//  def undoIn[A] (a: A): IO[UI[A]] = for {
-//    ui ← UI(a)
-//    _  ← StateTrans.undoIn(ui.stTrans, ui.undoOut)(IO(a)) go
-//  } yield ui
-//}
+import dire._, DataSink.sync, dire.control.Var, SF.id
+import dire.util.test.runN
+import dire.swing.UndoEdit
+import efa.core.ValSt
+import scalaz._, Scalaz._, effect._
+import scalaz.std.indexedSeq._
+import scalaz.concurrent.Strategy.Sequential
+import StateTrans.completeIsolated
+
+object UI {
+  def run(es: Event*): List[Int] = runN(SF io sf(es: _*), es.size + 1)
+
+  sealed trait Event
+  case class Mod(f: Int ⇒ Int) extends Event
+  case object Undo extends Event
+  case object Redo extends Event
+  
+  /** Simulates a user interface where the events given
+    * by param `es` are fired sequentially.
+    *
+    * The returned list contains all values displayed in
+    * the user interface (with an initial value of 0).
+    */
+  private def sf(es: Event*): IO[SIn[Int]] = for {
+    v  ← Var newVar none[Int]
+    sf ← IO {
+           val strategy = Some(Sequential)
+           val esA = es.toArray
+           var us: List[UndoEdit] = Nil
+           var rs: List[UndoEdit] = Nil
+
+           def undo(u: UndoEdit) = u.un >> IO { rs = u :: rs; us = us.tail }
+           def redo(u: UndoEdit) = u.re >> IO { us = u :: us; rs = rs.tail }
+
+           def onE(e: Event): IO[Unit] = e match {
+             case Undo   ⇒ us.headOption map undo orZero
+             case Redo   ⇒ rs.headOption map redo orZero
+             case _      ⇒ IO.ioUnit
+           }
+
+           def undoOut: Out[UndoEdit] = u ⇒ IO(us ::= u)
+           def values = v.in collectO identity //values displayed in the UI
+
+           //input events are fired sequentially whenever a value has been
+           //displayed in the UI
+           def input = values.count.events
+                             .filter { esA.size >= }
+                             .map { i ⇒ esA(i - 1) }
+
+           def uiSF = (id[Int] syncTo { v put _.some }) >>
+                      (input syncTo onE collect { case Mod(f) ⇒ modify(f).success })
+
+           completeIsolated(uiSF, undoOut, strategy)(IO(0)) >> values
+         }
+  } yield sf
+}
 
 // vim: set ts=2 sw=2 et:

@@ -1,11 +1,12 @@
 package efa.nb.controller
 
 import dire._, SF.{id, sfIO, const, loop}
-import dire.swing.UndoEdit
+import dire.swing.{SwingStrategy, UndoEdit}
 import efa.core.{ValRes, ValSt}
 import efa.io.LoggerIO
 import efa.nb.VStSF
 import scalaz._, Scalaz._, effect.IO
+import scalaz.concurrent.Strategy
 
 /** Functions for modelling complex user interfaces
   *
@@ -34,16 +35,26 @@ trait StateTransFunctions {
   def fold[A](dis: A \/ A): A = dis fold (identity, identity)
 
   def collectRaw[A](initial: IO[A]): SF[Input[A],A \/ A] = {
-    def accum(p: (A, Input[A]), o: Option[A \/ A]): Option[A \/ A] =
-      o getOrElse p._1.right fold (p._2, p._2) some
+    def scan(a: A) = 
+      id[Input[A]].scan(a.right[A])((in,last) ⇒ last fold (in, in))
 
-    def ini = const(0) >=> sfIO( _ ⇒ initial)
-
-    def pair = ini.sf[Input[A]] &&& id.hold { a: A ⇒ a.right }
-
-    pair.scan(none[A \/ A])(accum) collectO identity
+    SF.io(initial map scan)
   }
 
+  def complete[Raw,Calc,World]
+    (worldIn: SIn[World],
+     out: Out[UndoEdit],
+     strategy: Option[Strategy] = SwingStrategy)
+    (ui: SF[Calc,ValSt[Raw]])
+    (calc: (Raw,World) ⇒ Calc, ini: IO[Raw]): SIn[Raw] =
+    uiLoop((uiIn(worldIn)(ui)(calc) ⊹ undoIn(out, strategy)) >=> collectRaw(ini))
+
+  def completeIsolated[Raw](ui: SF[Raw,ValSt[Raw]],
+                            out: Out[UndoEdit],
+                            strategy: Option[Strategy] = SwingStrategy)
+                           (ini: IO[Raw])
+    : SIn[Raw] = complete(const(0), out, strategy)(ui)((r,_) ⇒ r, ini)
+    
   def uiIn[Raw,Calc,World]
     (worldIn: SIn[World])
     (ui: SF[Calc,ValSt[Raw]])
@@ -60,8 +71,9 @@ trait StateTransFunctions {
   def uiLoop[A](sf: SF[A \/ A, A \/ A]): SIn[A] = loop(sf) map fold[A] in
     
 
-  def undoIn[A](out: Out[UndoEdit]): SF[A \/ A, Input[A]] =
-    dire.swing.undo sf out map undoToInput[A]
+  def undoIn[A](out: Out[UndoEdit], strategy: Option[Strategy])
+    : SF[A \/ A, Input[A]] =
+    dire.swing.undo sf (out, strategy) map undoToInput[A]
 
   def undoToInput[A](a: A): Input[A] = _ ⇒ a.left
 
