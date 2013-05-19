@@ -5,7 +5,9 @@ import org.openide.util.lookup.{AbstractLookup, InstanceContent}
 import org.scalacheck._, Prop._
 import scalaz._, Scalaz._, scalacheck.ScalaCheckBinding._, effect.IO
 
-object PureLookupTest extends Properties("PureLookup") {
+object PureLookupTest
+  extends Properties("PureLookup")
+  with dire.util.TestFunctions {
   case class Cc(t: Time)
 
   implicit val CcEqual: Equal[Cc] = Equal.equalBy(_.t)
@@ -16,7 +18,7 @@ object PureLookupTest extends Properties("PureLookup") {
     def sf(pl: PureLookup) = (SF.time map Cc syncTo pl.add[Cc]) >>
                              (pl.results[Cc] to buffer(ccs) count)
 
-    PureLookup() >>= { pl ⇒ SF.run(sf(pl), 2, 1L)(_ >= 10) } unsafePerformIO
+    runUntil(SF io (PureLookup() map sf))(_ >= 10)
 
     (ccs.size ≟ 10) && (ccs.last.size ≟ 10)
   }
