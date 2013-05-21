@@ -12,6 +12,7 @@ object BuildSettings {
     organization := buildOrganization,
     version := buildVersion,
     scalaVersion := buildScalaVersion,
+    fork := true,
     resolvers += netbeansRepo,
     scalacOptions ++= Seq ("-deprecation", "-feature",
       "-language:postfixOps", "-language:implicitConversions",
