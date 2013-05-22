@@ -10,38 +10,35 @@ object StateTransTest extends Properties("StateTrans") {
   property("no events") = UI.run() ≟ List(0)
 
   property("add one") = forAll { i: Int ⇒ 
-    val res = UI.run(Mod(i + _)) 
-    println(res)
-    
-    res ≟ List(0, i)
+    UI.run(Mod(i + _)) ≟ List(0, i)
   }
 
-//  property("add two") = forAll { p: (Int,Int) ⇒ 
-//    val (a,b) = p
-//
-//    UI.run(Mod(a+), Mod(b*)) ≟ List(0, a, a * b)
-//  }
-//
-//  property("undo one") = forAll { i: Int ⇒ 
-//    UI.run(Mod(i+), Undo) ≟ List(0, i, 0)
-//  }
-//
-//  property("add two, undo two") = forAll { p: (Int,Int) ⇒ 
-//    val (a,b) = p
-//
-//    UI.run(Mod(a+), Mod(b*), Undo, Undo) ≟ List(0, a, a * b, a, 0)
-//  }
-//
-//  property("undo redo") = forAll { i: Int ⇒ 
-//    UI.run(Mod(i+), Undo, Redo) ≟ List(0, i, 0, i)
-//  }
-//
-//  property("complex undo redo") = forAll { t: (Int, Int, Int) ⇒ 
-//    val (a, b, c) = t
-//
-//    UI.run(Mod(a+), Mod(b+), Undo, Mod(c+), Undo, Undo, Redo, Mod(a+)) ≟ 
-//      List(0, a, a + b, a, a + c, a, 0, a, a + a)
-//  }
+  property("add two") = forAll { p: (Int,Int) ⇒ 
+    val (a,b) = p
+
+    UI.run(Mod(a+), Mod(b*)) ≟ List(0, a, a * b)
+  }
+
+  property("undo one") = forAll { i: Int ⇒ 
+    UI.run(Mod(i+), Undo) ≟ List(0, i, 0)
+  }
+
+  property("add two, undo two") = forAll { p: (Int,Int) ⇒ 
+    val (a,b) = p
+
+    UI.run(Mod(a+), Mod(b*), Undo, Undo) ≟ List(0, a, a * b, a, 0)
+  }
+
+  property("undo redo") = forAll { i: Int ⇒ 
+    UI.run(Mod(i+), Undo, Redo) ≟ List(0, i, 0, i)
+  }
+
+  property("complex undo redo") = forAll { t: (Int, Int, Int) ⇒ 
+    val (a, b, c) = t
+
+    UI.run(Mod(a+), Mod(b+), Undo, Mod(c+), Undo, Undo, Redo, Mod(a+)) ≟ 
+      List(0, a, a + b, a, a + c, a, 0, a, a + a)
+  }
 }
 
 // vim: set ts=2 sw=2 et:

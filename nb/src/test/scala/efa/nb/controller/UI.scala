@@ -29,16 +29,15 @@ object UI extends dire.util.TestFunctions {
            def onE(e: Event): IO[Unit] = e match {
              case Undo   ⇒ us.headOption map undo orZero
              case Redo   ⇒ rs.headOption map redo orZero
-             case Mod(f) ⇒ IO.putStrLn(Mod(f).toString) >>
-                           (v put modify(f).success.some)
+             case Mod(f) ⇒ v put modify(f).success.some
            }
 
            def undoOut: Out[UndoEdit] = u ⇒ IO(us ::= u)
 
-           def uiSF = (id[Int] to stdOut) >> (v.in collectO identity)
+           def uiSF = v.in collectO identity
 
            (id[Event] syncTo onE) >>
-           completeIsolated(uiSF, undoOut)(IO(0))
+           completeIsolated(uiSF.sf, undoOut, Sequential)(IO(0))
          }
   } yield sf
 }

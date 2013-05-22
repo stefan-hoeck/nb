@@ -1,6 +1,6 @@
 package efa.nb.node
 
-import dire._
+import dire._, SF.const
 import efa.core.{UniqueId, Efa, ValSt, ParentL}, Efa._
 import org.scalacheck._, Prop._
 import scalaz._, Scalaz._, effect.IO
@@ -9,7 +9,7 @@ object NbChildrenTest
   extends Properties("NbChildren")
   with dire.util.TestFunctions {
   import NbChildren._
-  import NbNodeTest.{outTestIO, outTest}
+  import NbNodeTest.{outTestIO, outTest, testSF}
 
   private val toChild = (p: (String,Int)) ⇒ Child(p._2, p._1)
 
@@ -28,23 +28,22 @@ object NbChildrenTest
   }
 
   //Test that after resetting the nodes, all nodes are created afresh
-//  property ("seqFactory_reset") = Prop.forAll { cs: List[Child] ⇒ 
-//    val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
-//
-//    val res = for {
-//      n ← NbNode.apply
-//      v ← Signal newVar cs
-//      _ ← seqOut set n runIO v
-//      ca = n.getChildren.getNodes
-//      aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
-//      _ ← v put rs
-//      cb = n.getChildren.getNodes
-//      bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
-//      ne = (ca zip cb).toList ∀ {case (a,b) ⇒ a ne b} :| "equality"
-//    } yield aSet && bSet && ne
-//
-//    evalProp (res)
-//  }
+  property ("seqFactory_reset") = Prop.forAll { cs: List[Child] ⇒ 
+    val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
+
+    val res = for {
+      n    ← NbNode.apply
+      _    = runN(testSF(seqOut, n)(cs), 0)
+      ca   = n.getChildren.getNodes
+      aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
+      _    = runN(testSF(seqOut, n)(rs), 0)
+      cb   = n.getChildren.getNodes
+      bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
+      ne   = (ca zip cb).toList ∀ {case (a,b) ⇒ a ne b} :| "equality"
+    } yield aSet && bSet && ne
+
+    evalProp (res)
+  }
 
   lazy val uidFac = uidF(nameOut)(identity[List[Child]])
   lazy val uidOut = children(uidFac)
@@ -53,25 +52,24 @@ object NbChildrenTest
     outTest(cs, uidOut, displayNames, cs map { _.name })
   }
 
-//  //Test that after resetting the nodes, the same nodes are used if
-//  //The id numbers stay the same
-//  property ("uidFactory_reset") = Prop.forAll { cs: List[Child] ⇒ 
-//    val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
-//
-//    val res = for {
-//      n ← NbNode.apply
-//      v ← Signal newVar cs
-//      _ ← uidOut set n runIO v
-//      ca = n.getChildren.getNodes
-//      aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
-//      _ ← v put rs
-//      cb = n.getChildren.getNodes
-//      bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
-//      eq = (ca zip cb).toList ∀ {case (a,b) ⇒ a eq b} :| "equality"
-//    } yield aSet && bSet && eq
-//
-//    evalProp (res)
-//  }
+  //Test that after resetting the nodes, the same nodes are used if
+  //The id numbers stay the same
+  property ("uidFactory_reset") = Prop.forAll { cs: List[Child] ⇒ 
+    val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
+
+    val res = for {
+      n    ← NbNode.apply
+      _    = runN(testSF(uidOut, n)(cs), 0)
+      ca   = n.getChildren.getNodes
+      aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
+      _    = runN(testSF(uidOut, n)(rs), 0)
+      cb   = n.getChildren.getNodes
+      bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
+      eq   = (ca zip cb).toList ∀ {case (a,b) ⇒ a eq b} :| "equality"
+    } yield aSet && bSet && eq
+
+    evalProp (res)
+  }
 //
   //HList-based
   type NPOut[A] = NodeOut[A,ValSt[Parent]]
@@ -85,12 +83,12 @@ object NbChildrenTest
     children(parentF(childOut)) ⊹
     NbNode.named
   
-  private def displayNames (n: NbNode): List[String] =
+  private def displayNames(n: NbNode): List[String] =
     n.getChildren.getNodes(true).toList map (_.getDisplayName)
 
-  private def eval (io: IO[Boolean]) = io.unsafePerformIO
+  private def eval(io: IO[Boolean]) = io.unsafePerformIO
 
-  private def evalProp (io: IO[Prop]) = io.unsafePerformIO
+  private def evalProp(io: IO[Prop]) = io.unsafePerformIO
 
 }
 
