@@ -22,14 +22,26 @@ object UI extends dire.util.TestFunctions {
     sf ← IO {
            var us: List[UndoEdit] = Nil
            var rs: List[UndoEdit] = Nil
+           var last = 0
 
            def undo(u: UndoEdit) = u.un >> IO { rs = u :: rs; us = us.tail }
            def redo(u: UndoEdit) = u.re >> IO { us = u :: us; rs = rs.tail }
 
+           //Only distinct events are passed on, therefor we
+           //might need to push the `fired` button to notify
+           //all interested parties, that the event in question was
+           //indeed processed
            def onE(e: Event): IO[Unit] = e match {
-             case Undo   ⇒ us.headOption map undo orZero
-             case Redo   ⇒ rs.headOption map redo orZero
-             case Mod(f) ⇒ v put modify(f).success.some
+             case Undo   ⇒ us.headOption.cata(undo, o(()))
+             case Redo   ⇒ rs.headOption.cata(redo, o(()))
+             case Mod(f) ⇒ (v put modify(f).success.some) >> IO {
+                             val next = f(last)
+                             val changed = next ≠ last
+                             last = next
+
+                             changed ? IO.ioUnit | o(())
+                           } μ
+                           
            }
 
            def undoOut: Out[UndoEdit] = u ⇒ IO(us ::= u)

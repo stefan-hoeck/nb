@@ -7,37 +7,49 @@ import scalaz._, Scalaz._, effect.IO
 object StateTransTest extends Properties("StateTrans") {
   import UI._
 
-  property("no events") = UI.run() ≟ List(0)
+  property("no events") = UI.run() ≟ dist(0)
 
   property("add one") = forAll { i: Int ⇒ 
-    UI.run(Mod(i + _)) ≟ List(0, i)
+    UI.run(Mod(i + _)) ≟ dist(0, i)
   }
 
   property("add two") = forAll { p: (Int,Int) ⇒ 
     val (a,b) = p
 
-    UI.run(Mod(a+), Mod(b*)) ≟ List(0, a, a * b)
+    UI.run(Mod(a+), Mod(b*)) ≟ dist(0, a, a * b)
   }
 
   property("undo one") = forAll { i: Int ⇒ 
-    UI.run(Mod(i+), Undo) ≟ List(0, i, 0)
+    UI.run(Mod(i+), Undo) ≟ dist(0, i, 0)
   }
 
   property("add two, undo two") = forAll { p: (Int,Int) ⇒ 
     val (a,b) = p
 
-    UI.run(Mod(a+), Mod(b*), Undo, Undo) ≟ List(0, a, a * b, a, 0)
+    UI.run(Mod(a+), Mod(b*), Undo, Undo) ≟ dist(0, a, a * b, a, 0)
   }
 
   property("undo redo") = forAll { i: Int ⇒ 
-    UI.run(Mod(i+), Undo, Redo) ≟ List(0, i, 0, i)
+    UI.run(Mod(i+), Undo, Redo) ≟ dist(0, i, 0, i)
   }
 
-  property("complex undo redo") = forAll { t: (Int, Int, Int) ⇒ 
-    val (a, b, c) = t
+  property("complex undo redo") = {
+    val (a, b, c) = (10, 20, -30)
 
     UI.run(Mod(a+), Mod(b+), Undo, Mod(c+), Undo, Undo, Redo, Mod(a+)) ≟ 
-      List(0, a, a + b, a, a + c, a, 0, a, a + a)
+      dist(0, a, a + b, a, a + c, a, 0, a, a + a)
+  }
+
+  type ISt[+A] = State[Int,A]
+
+  def dist(is: Int*): List[Int] = {
+    val iL = is.toList
+    val ini = iL.headOption.cata(_ - 1, 0)
+
+    def st(i: Int): ISt[Option[Int]] =
+      State { old ⇒ (i, (old ≟ i) ? none[Int] | i.some) }
+
+    iL traverse st eval ini flatten
   }
 }
 

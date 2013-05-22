@@ -34,14 +34,14 @@ trait StateTransFunctions {
 
   def fold[A](dis: A \/ A): A = dis fold (identity, identity)
 
-  def collectRaw[A](initial: IO[A]): SF[Input[A],A \/ A] = {
+  def collectRaw[A:Equal](initial: IO[A]): SF[Input[A],A \/ A] = {
     def scan(a: A) = 
       id[Input[A]].scan(a.right[A])((in,last) ⇒ last fold (in, in))
 
-    SF.io(initial map scan)
+    SF.io(initial map scan).distinct
   }
 
-  def complete[Raw,Calc,World]
+  def complete[Raw:Equal,Calc,World]
     (worldIn: SIn[World],
      out: Out[UndoEdit],
      strategy: Option[Strategy] = SwingStrategy)
@@ -49,7 +49,7 @@ trait StateTransFunctions {
     (calc: (Raw,World) ⇒ Calc, ini: IO[Raw]): SIn[Raw] =
     uiLoop((uiIn(worldIn)(ui)(calc) ⊹ undoIn(out, strategy)) >=> collectRaw(ini))
 
-  def completeIsolated[Raw](ui: SF[Raw,ValSt[Raw]],
+  def completeIsolated[Raw:Equal](ui: SF[Raw,ValSt[Raw]],
                             out: Out[UndoEdit],
                             strategy: Option[Strategy] = SwingStrategy)
                            (ini: IO[Raw])
