@@ -13,7 +13,7 @@ import scala.swing.Alignment
 import shapeless.{HList, ::}
 
 object NbNode extends NbNodeFunctions {
-  def apply: IO[NbNode] = for {
+  def apply(): IO[NbNode] = for {
     hc  ← NbChildren.create
     lkp ← PureLookup.apply
     res ← IO (new NbNode (lkp, hc))
