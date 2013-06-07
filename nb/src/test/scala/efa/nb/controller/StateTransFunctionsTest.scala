@@ -42,6 +42,7 @@ object StateTransTest extends Properties("StateTrans") {
 
   type ISt[+A] = State[Int,A]
 
+  //Creates a list of distinct values
   def dist(is: Int*): List[Int] = {
     val iL = is.toList
     val ini = iL.headOption.cata(_ - 1, 0)
