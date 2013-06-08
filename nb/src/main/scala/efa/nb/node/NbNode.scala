@@ -67,17 +67,17 @@ trait NbNodeFunctions {
   def editOption[A]: NodeOut[Option[A],A] =
     NodeOut((outA, n) ⇒ oa ⇒ n setEditor oa.map(outA))
 
-  def editDialog[A,B](implicit D: DialogEditable[A,B]): NodeOut[A,B] =
+  def editE[A,B](implicit D: Editable[A,B]): NodeOut[A,B] =
     edit[A] collectIO D.edit
 
-  def editDialogEs[A,B,C] (f: B ⇒ State[C,Unit])
-    (implicit D: DialogEditable[A,B]): NodeOut[A,ValSt[C]] =
-    editDialog[A,B] map (f(_).success)
+  def editS[A,B,C] (f: B ⇒ State[C,Unit])
+    (implicit D: Editable[A,B]): NodeOut[A,ValSt[C]] =
+    editE[A,B] map (f(_).success)
 
-  def editDialogP[F[_],P,C:Equal,Path <: HList]
-    (implicit D: DialogEditable[C :: Path, C],
+  def editP[F[_],P,C:Equal,Path <: HList]
+    (implicit D: Editable[C :: Path, C],
       p: ParentL[F,P,C,Path]): NodeOut[C :: Path,ValSt[P]] =
-    editDialog[C :: Path,C] withIn p.updateV
+    editE[C :: Path,C] withIn p.updateV
 
   val iconBase: NodeOut[String,Nothing] =
     outImpure(_ setIconBaseWithExtension _)
@@ -117,25 +117,25 @@ trait NbNodeFunctions {
   def addNt[A]: NodeOut[(A,String),A] =
     NodeOut((o, n) ⇒ p ⇒ n addNewType (p._2, o apply p._1))
 
-  def addNtDialog[A,B](implicit D: DialogEditable[A,B])
+  def addNtE[A,B](implicit D: Editable[A,B])
     : NodeOut[A,B] =
     addNt[A] contramap {a: A ⇒ (a, D name a)} collectIO D.create
 
-  def addNtDialogEs[A,B,C] (f: B ⇒ State[C,Unit])
-    (implicit D: DialogEditable[A,B])
-    : NodeOut[A,ValSt[C]] = addNtDialog map (f(_).success)
+  def addNtS[A,B,C] (f: B ⇒ State[C,Unit])
+    (implicit D: Editable[A,B])
+    : NodeOut[A,ValSt[C]] = addNtE map (f(_).success)
 
-  def addNtDialogP[F[_],P,C,Path <: HList](c: Path ⇒ C)
-    (implicit D: DialogEditable[C :: Path, C],
+  def addNtP[F[_],P,C,Path <: HList](c: Path ⇒ C)
+    (implicit D: Editable[C :: Path, C],
       p: ParentL[F,P,C,Path]): NodeOut[Path,ValSt[P]] =
-    addNtDialogsP[F,P,C,Path](p ⇒ List(c(p)))
+    addNtPs[F,P,C,Path](p ⇒ List(c(p)))
 
   //@todo: clean up code
-  def addNtDialogsP[F[_],P,C,Path <: HList](cs: Path ⇒ List[C])
-    (implicit D: DialogEditable[C :: Path, C],
+  def addNtPs[F[_],P,C,Path <: HList](cs: Path ⇒ List[C])
+    (implicit D: Editable[C :: Path, C],
       p: ParentL[F,P,C,Path]): NodeOut[Path,ValSt[P]] = {
 
-      val dialogOut: NodeOut[C :: Path, C] = addNtDialog[C :: Path,C]
+      val dialogOut: NodeOut[C :: Path, C] = addNtE[C :: Path,C]
 
       val pathOut: NodeOut[Path,C] = NodeOut((o,n) ⇒ path ⇒ {
         val cOut = dialogOut run (o, n)
@@ -146,20 +146,20 @@ trait NbNodeFunctions {
       pathOut withIn p.addV
     }
 
-  def createNtDialogP[F[_],P,C,Path <: HList,Id:Enum:Monoid](c: Path ⇒ C)
-    (implicit D: DialogEditable[C :: Path, C],
+  def createNtP[F[_],P,C,Path <: HList,Id:Enum:Monoid](c: Path ⇒ C)
+    (implicit D: Editable[C :: Path, C],
       p: ParentL[F,P,C,Path],
       u: UniqueIdL[C,Id]): NodeOut[Path,ValSt[P]] =
-    createNtDialogsP[F,P,C,Path,Id](p ⇒ List(c(p)))
+    createNtPs[F,P,C,Path,Id](p ⇒ List(c(p)))
 
   //@todo: clean up code
   //@todo: imporve type inference. problems with inferring Id type
-  def createNtDialogsP[F[_],P,C,Path <: HList,Id:Enum:Monoid](cs: Path ⇒ List[C])
-    (implicit D: DialogEditable[C :: Path, C],
+  def createNtPs[F[_],P,C,Path <: HList,Id:Enum:Monoid](cs: Path ⇒ List[C])
+    (implicit D: Editable[C :: Path, C],
       p: ParentL[F,P,C,Path],
       u: UniqueIdL[C,Id]): NodeOut[Path,ValSt[P]] = {
 
-      val dialogOut: NodeOut[C :: Path, C] = addNtDialog[C :: Path,C]
+      val dialogOut: NodeOut[C :: Path, C] = addNtE[C :: Path,C]
 
       val pathOut: NodeOut[Path,C] = NodeOut((o,n) ⇒ path ⇒ {
         val cOut = dialogOut run (o, n)

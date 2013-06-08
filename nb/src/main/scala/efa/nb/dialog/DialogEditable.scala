@@ -2,13 +2,14 @@ package efa.nb.dialog
 
 import efa.core._
 import efa.nb.{loc, NbSystem}
+import efa.nb.node.Editable
 import dire._, dire.swing.{SwingStrategy, swingSink}
 import javax.swing.JDialog
 import org.openide.{DialogDisplayer, DialogDescriptor, NotifyDescriptor}
 import scalaz._, Scalaz._, effect.IO
 
 /** Type class used to edit objects in a popup dialog */
-trait DialogEditable[-A,+B] {
+trait DialogEditable[-A,+B] extends Editable[A,B] {
   import DialogEditable._
 
   /** Creates a new component for editing
@@ -46,9 +47,9 @@ trait DialogEditable[-A,+B] {
     res    ← ok ? ref.read.map { _.toOption } | IO(None)
   } yield res
 
-  final def edit(a: A): IO[Option[B]] = editDialog(editTitle(a), a, false)
-
-  final def create(a: A): IO[Option[B]] = editDialog(newTitle(a), a, true)
+  final def apply(a: A, isNew: Boolean): IO[Option[B]] =
+    isNew ? editDialog(newTitle(a), a, true) |
+            editDialog(editTitle(a), a, false)
 
   lazy val sf: SF[A,B] = SF sfIO (edit, SwingStrategy) collectO identity
 }

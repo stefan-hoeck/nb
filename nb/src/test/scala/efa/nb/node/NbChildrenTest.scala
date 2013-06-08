@@ -76,7 +76,7 @@ object NbChildrenTest
 
   val childOut: NPOut[FullChild] =
     (NbNode.destroyP: NPOut[FullChild]) ⊹ 
-    NbNode.editDialogP ⊹ 
+    NbNode.editP ⊹ 
     NbNode.named
 
   val parentOut: NPOut[ParentPath] = 
