@@ -40,6 +40,13 @@ object StateTransTest extends Properties("StateTrans") {
       dist(0, a, a + b, a, a + c, a, 0, a, a + a)
   }
 
+  import UINode.Rename
+
+  property("ui with node") = {
+    UINode.run(Rename("blub"), Rename("blib"), Rename("blab")) ≟
+      List("boo", "blub", "blib", "blab")
+  }
+
   type ISt[+A] = State[Int,A]
 
   //Creates a list of distinct values

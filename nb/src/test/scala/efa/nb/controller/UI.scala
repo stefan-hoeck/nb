@@ -5,7 +5,6 @@ import dire.util.test.runN
 import dire.swing.UndoEdit
 import efa.core.ValSt
 import scalaz._, Scalaz._, effect._
-import scalaz.std.indexedSeq._
 import scalaz.concurrent.Strategy.Sequential
 import StateTrans.completeIsolated
 
