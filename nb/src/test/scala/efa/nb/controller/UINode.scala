@@ -22,9 +22,7 @@ object UINode extends dire.util.TestFunctions {
     n  ← NbNode()
     sf ← IO {
            def onE(e: Event): IO[Unit] = e match {
-             case Rename(s)   ⇒ 
-               IO.putStrLn(n.getDisplayName) >>
-               IO(n.setName(s))
+             case Rename(s)   ⇒ IO(n.setName(s))
            }
 
            def undoOut: Out[UndoEdit] = u ⇒ IO.ioUnit
