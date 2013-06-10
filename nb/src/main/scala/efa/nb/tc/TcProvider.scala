@@ -4,7 +4,7 @@ import efa.nb.pref
 import org.openide.windows.{TopComponent, WindowManager}
 import scalaz._, Scalaz._, effect._
 
-abstract class TcProvider[Tc] private (
+abstract class TcProvider[Tc] (
     factory: IO[Tc],
     val preferredId: String)
     (implicit m: Manifest[Tc]) {
