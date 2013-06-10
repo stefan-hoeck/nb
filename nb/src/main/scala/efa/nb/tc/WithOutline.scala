@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 import scala.swing.Action
 
 abstract class WithOutline(
-    outlineNb: OutlineNb,
+    final override protected val outlineNb: OutlineNb,
     rn: Node,
     lkp: Option[Lookup])
   extends ExplorerMgrTc(rn, lkp) with PersistentOutline {
