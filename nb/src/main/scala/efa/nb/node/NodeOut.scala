@@ -41,7 +41,7 @@ case class NodeOut[-A,+B](run: (Out[B], NbNode) ⇒ Out[A]) {
   def sf(n: NbNode): SF[A,B] = sfST(n, SwingStrategy)
 
   //for testing
-  private[node] def sfST(n: NbNode, st: Option[Strategy]): SF[A,B] =
+  def sfST(n: NbNode, st: Option[Strategy]): SF[A,B] =
     SF.connectOuts(run(_,n), st)
 
   def withIn[C<:A,D](f: (C,B) ⇒ D): NodeOut[C,D] =
