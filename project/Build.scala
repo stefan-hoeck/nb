@@ -8,10 +8,15 @@ object BuildSettings {
   val buildScalaVersion = sv
   val netbeansRepo = "Netbeans" at "http://bits.netbeans.org/maven2/"
 
+  val manifest = SettingKey[File]("manifest", "Location of the Manifest.mf file")
+  val removeManifest = TaskKey[Unit]("remove-manifest", "Removes manifest file")
+ 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
     version := buildVersion,
     scalaVersion := buildScalaVersion,
+    manifest <<= classDirectory in Compile apply (_ / "META-INF/MANIFEST.MF"),
+    removeManifest <<= manifest map (f ⇒ f.delete),
     fork := true,
     resolvers += netbeansRepo,
     scalacOptions ++= Seq ("-deprecation", "-feature",
