@@ -7,11 +7,10 @@ import java.beans.PropertyEditor
 import javax.swing.{JComponent, KeyStroke}
 import org.openide.explorer.propertysheet.{InplaceEditor, PropertyModel,
   PropertyEnv}
-import scala.swing.Component
 
 abstract class ComponentInplaceEditor[T](implicit m: Manifest[T])
    extends InplaceEditor {  
-  protected val comp: Component
+  protected val comp: JComponent
   protected def get: T
   protected def set(t: T)
   private[this] var editor: Option[PropertyEditor] = None
@@ -21,7 +20,7 @@ abstract class ComponentInplaceEditor[T](implicit m: Manifest[T])
     editor = Option(propertyEditor)
     reset()
   }
-  override def getComponent: JComponent = comp.peer
+  override def getComponent: JComponent = comp
   override def clear() { editor = None; model = None }
   override def getValue = get.asInstanceOf[AnyRef]
   override def setValue(o: AnyRef) { set(o.asInstanceOf[T]) }
@@ -32,7 +31,7 @@ abstract class ComponentInplaceEditor[T](implicit m: Manifest[T])
   override def getPropertyEditor = editor | null
   override def getPropertyModel = model | null
   override def setPropertyModel(m: PropertyModel) { model = Option(m) }
-  override def isKnownComponent(c: JComp) = c == comp.peer || (comp.peer isAncestorOf c)
+  override def isKnownComponent(c: JComp) = c == comp || (comp isAncestorOf c)
   override def addActionListener(ali: ActionListener) {}
   override def removeActionListener(ali: ActionListener) {}
 }

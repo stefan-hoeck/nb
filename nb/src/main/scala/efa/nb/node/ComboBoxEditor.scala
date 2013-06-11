@@ -1,12 +1,13 @@
 package efa.nb.node
 
+import dire.swing.HAlign
 import java.awt.{Rectangle, Graphics}
 import java.beans.PropertyEditorSupport
+import javax.swing.{JComboBox, JLabel}
 import org.openide.explorer.propertysheet.{ExPropertyEditor, InplaceEditor,
    PropertyEnv}
-import scala.swing.{Alignment, ComboBox, Label}
 
-class ComboBoxEditor[T](values: List[T], al: Alignment.Value)
+class ComboBoxEditor[T](values: List[T], al: HAlign)
                        (implicit m: Manifest[T])
    extends PropertyEditorSupport
    with ExPropertyEditor
@@ -16,19 +17,28 @@ class ComboBoxEditor[T](values: List[T], al: Alignment.Value)
   override def getInplaceEditor: InplaceEditor = new ComboBoxInplace[T](values)
   override def isPaintable = true
   override def paintValue(g: Graphics, r: Rectangle) {
-    val cbx = new Label (getValue.toString) {
-      horizontalAlignment = al
-    }
-    cbx.peer.setBounds(r)
-    cbx.peer.paint(g)
+    val l = new JLabel (getValue.toString)
+
+    l.setHorizontalAlignment(al.v)
+    l.setBounds(r)
+    l.paint(g)
   }
 }
 
 private [node] class ComboBoxInplace[T](values: List[T])(implicit m: Manifest[T]) 
     extends ComponentInplaceEditor[T] {
-  protected val comp = new ComboBox[T] (values)
-  override def get = comp.selection.item
-  override def set(o: T) { comp.selection.item = o }
+  import scala.collection.JavaConversions._
+
+  protected val comp = {
+    val v = new java.util.Vector[T](values.size)
+
+    values foreach v.add
+
+    new JComboBox[T](v)
+  }
+
+  override def get = comp.getItemAt(comp.getSelectedIndex)
+  override def set(o: T) { comp.setSelectedItem(o) }
   override def supportsTextEntry = false
 }
 

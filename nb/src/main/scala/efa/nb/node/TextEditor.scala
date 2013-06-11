@@ -1,14 +1,15 @@
 package efa.nb.node
 
 import dire.Out
+import dire.swing.HAlign
 import java.awt.{Rectangle, Graphics}
 import java.beans.PropertyEditorSupport
+import javax.swing.{JTextField, JLabel}
 import org.openide.explorer.propertysheet.{ExPropertyEditor, InplaceEditor, PropertyEnv}
-import scala.swing.{TextField, Label, Alignment}
 import scalaz.effect.IO
 
 class TextEditor(
-  al: Alignment.Value,
+  al: HAlign,
   value: String,
   desc: Option[String],
   textOut: Out[String]
@@ -22,23 +23,23 @@ class TextEditor(
   override def getAsText = desc getOrElse ""
   override def isPaintable = true
   override def paintValue(g: Graphics, r: Rectangle): Unit = {
-    val cbx = new Label(value){
-      horizontalAlignment = al
-    }
-    cbx.peer.setBounds(r)
-    cbx.peer.paint(g)
+    val l = new JLabel(value)
+
+    l.setHorizontalAlignment(al.v)
+    l.setBounds(r)
+    l.paint(g)
   }
 }
 
 object TextEditor {
   def read[A] (
-    al: Alignment.Value, toString: A ⇒ String, desc: A ⇒ Option[String]
+    al: HAlign, toString: A ⇒ String, desc: A ⇒ Option[String]
   ): Option[A ⇒ TextEditor] =
     Some (a ⇒ rw[A](a, al, toString, desc, _ ⇒ IO.ioUnit))
 
   def rw[A] (
     a: A, 
-    al: Alignment.Value,
+    al: HAlign,
     toString: A ⇒ String,
     desc: A ⇒ Option[String],
     o: Out[String]
@@ -47,8 +48,8 @@ object TextEditor {
 
 private [node] class TextInplace (value: String)
    extends ComponentInplaceEditor[AnyRef] {
-  protected val comp = new TextField {text = value}
-  override def get = comp.text
+  protected val comp = new JTextField(value)
+  override def get = comp.getText
   override def set(o: AnyRef) {}
   override def supportsTextEntry = true
 }

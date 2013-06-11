@@ -5,11 +5,11 @@ import efa.core._, Efa._
 import efa.nb.PureLookup
 import efa.nb.dialog.DialogEditable
 import dire._
+import dire.swing.HAlign
 import java.awt.Image
 import java.beans.PropertyEditor
 import javax.swing.Action
 import org.openide.nodes.{Children, AbstractNode, Sheet, Node, NodeTransfer}
-import scala.swing.Alignment
 import shapeless.{HList, ::}
 
 object NbNode extends NbNodeFunctions {
@@ -187,21 +187,21 @@ trait NbNodeFunctions {
     writeProp[Boolean,Boolean](n, identity, Some(_ ⇒ new BooleanEditor))
 
   def intW (n: String): NodeOut[Int,Nothing] =
-    textW[Int,Int](n, identity, al = Alignment.Trailing)
+    textW[Int,Int](n, identity, al = HAlign.Trailing)
 
   def longW (n: String): NodeOut[Long,Nothing] =
-    textW[Long,Long](n, identity, al = Alignment.Trailing)
+    textW[Long,Long](n, identity, al = HAlign.Trailing)
 
   def doubleW (n: String, format: Double ⇒ String)
   : NodeOut[Double,Nothing] = textW[Double,Double](
-    n, identity, toString = format, al = Alignment.Trailing
+    n, identity, toString = format, al = HAlign.Trailing
   )
 
   def showW[A:Show](n: String): NodeOut[A,Nothing] =
     stringW(n) ∙ (_.shows)
 
   def showWTrailing[A:Show](n: String): NodeOut[A,Nothing] =
-    textW[A,String](n, _.shows, _.shows, al = Alignment.Trailing)
+    textW[A,String](n, _.shows, _.shows, al = HAlign.Trailing)
 
   def stringW (n: String): NodeOut[String,Nothing] =
     textW[String,String](n, identity)
@@ -211,7 +211,7 @@ trait NbNodeFunctions {
     toB: A ⇒ B,
     toString: A ⇒ String = (a: A) ⇒ a.toString,
     desc: A ⇒ Option[String] = (a: A) ⇒ None,
-    al: Alignment.Value = Alignment.Leading
+    al: HAlign = HAlign.Leading
   ): NodeOut[A,Nothing] =
     writeProp[A,B](name, toB, TextEditor.read(al, toString, desc))
 
@@ -223,27 +223,27 @@ trait NbNodeFunctions {
   def comboRw[A:Manifest] (
     as: List[A],
     n: String,
-    al: Alignment.Value = Alignment.Trailing
+    al: HAlign = HAlign.Trailing
   ): NodeOut[A,ValRes[A]] =
     rwProp[A,A](n, identity,
       Validators.dummy, Some((_,_) ⇒ new ComboBoxEditor(as, al)))
 
   def intRw (n: String, v: EndoVal[Int]): NodeOut[Int,ValRes[Int]] =
-   readRw[Int](n, v, al = Alignment.Trailing)
+   readRw[Int](n, v, al = HAlign.Trailing)
 
   def longRw (n: String, v: EndoVal[Long]): NodeOut[Long,ValRes[Long]] =
-   readRw[Long](n, v, al = Alignment.Trailing)
+   readRw[Long](n, v, al = HAlign.Trailing)
 
   def stringRw (n: String, v: EndoVal[String])
     : NodeOut[String,ValRes[String]] =
-   readRw[String](n, v, al = Alignment.Leading)
+   readRw[String](n, v, al = HAlign.Leading)
 
   def readRw[A:Read:Manifest](
     name: String,
     validator: EndoVal[A],
     toString: A ⇒ String = (a: A) ⇒ a.toString,
     desc: A ⇒ Option[String] = (a: A) ⇒ None,
-    al: Alignment.Value = Alignment.Leading
+    al: HAlign = HAlign.Leading
   ): NodeOut[A,ValRes[A]] = textRw[A](
     name, Read[A].validator >=> validator, toString, desc, al
   )
@@ -253,7 +253,7 @@ trait NbNodeFunctions {
     read: Validator[String,A],
     toString: A ⇒ String = (a: A) ⇒ a.toString,
     desc: A ⇒ Option[String] = (a: A) ⇒ None,
-    al: Alignment.Value = Alignment.Leading
+    al: HAlign = HAlign.Leading
   ): NodeOut[A,ValRes[A]] = {
     def ed (a: A, o: Out[ValRes[A]]) = {
       val textOut: Out[String] = o ∙ (read run _ validation)

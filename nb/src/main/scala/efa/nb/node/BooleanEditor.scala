@@ -1,9 +1,10 @@
 package efa.nb.node
 
+import dire.swing.HAlign
 import java.awt.{Rectangle, Graphics}
 import java.beans.PropertyEditorSupport
+import javax.swing.JCheckBox
 import org.openide.explorer.propertysheet.{ExPropertyEditor,InplaceEditor, PropertyEnv}
-import scala.swing.{Alignment, CheckBox}
 
 class BooleanEditor 
    extends PropertyEditorSupport
@@ -14,19 +15,19 @@ class BooleanEditor
   override def getInplaceEditor: InplaceEditor = BooleanInplace
   override def isPaintable = true
   override def paintValue(g: Graphics, r: Rectangle) {
-    val cbx = new CheckBox {
-      selected = getValue.asInstanceOf[Boolean]
-      horizontalAlignment = Alignment.Center
-    }
-    cbx.peer.setBounds(r)
-    cbx.peer.paint(g)
+    val c = new JCheckBox
+    
+    c.setSelected(getValue.asInstanceOf[Boolean])
+    c.setHorizontalAlignment(HAlign.Center.v)
+    c.setBounds(r)
+    c.paint(g)
   }
 }
 
 private [node] object BooleanInplace extends ComponentInplaceEditor[Boolean] {
-  protected val comp = new CheckBox
-  override def get = comp.selected
-  override def set(o: Boolean) { comp.selected = o }
+  protected val comp = new JCheckBox
+  override def get = comp.isSelected
+  override def set(o: Boolean) { comp.setSelected(o) }
   override def supportsTextEntry = false
 }
 

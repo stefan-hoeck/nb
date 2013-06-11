@@ -4,6 +4,7 @@ import dire.SF
 import dire.control.ReactiveSystem
 import efa.core.{ValRes, Service, ValSt}
 import efa.nb.spi.{NbLoc, TcPreferences}
+import javax.swing.{Action, AbstractAction}
 import scalaz.State
 
 package object nb {
@@ -16,6 +17,10 @@ package object nb {
   private[nb] lazy val pref = Service.unique[TcPreferences](TcPreferences)
 
   lazy val NbSystem = ReactiveSystem().unsafePerformIO()
+
+  def action(name: String)(run: () ⇒ Unit): Action = new AbstractAction(name) {
+    override def actionPerformed(e: java.awt.event.ActionEvent) { run() }
+  }
 }
 
 // vim: set ts=2 sw=2 et:

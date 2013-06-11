@@ -28,7 +28,7 @@ object BuildSettings {
 object Dependencies {
   import BuildSettings.sv
 
-  val utilV = "0.2.1-SNAPSHOT"
+  val utilV = "0.2.2-SNAPSHOT"
   val direV = "0.1.0-SNAPSHOT"
   val nbV = "RELEASE71"
   val scalazV = "7.0.0"
@@ -37,8 +37,6 @@ object Dependencies {
   val util = "efa"
   val dire = "dire"
   val scalaz = "org.scalaz"
-
-  val scalaSwing = "org.scala-lang" % "scala-swing" % sv
 
   val efa_core = util %% "efa-core" % utilV changing
 
@@ -94,7 +92,7 @@ object UtilBuild extends Build {
     file("nb"),
     settings = addDeps (
       nbUtil, nbLookup, nbDialogs, nbNodes, nbExplorer, nbModules,
-      nbOptions, nbFilesystems, nbLoaders, scalaSwing, dire_core,
+      nbOptions, nbFilesystems, nbLoaders, dire_core,
       dire_swing, efa_core, efa_io
     )
   )

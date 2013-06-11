@@ -23,11 +23,6 @@
     </dependency>
     <dependency>
       <groupId>efa.nb</groupId>
-      <artifactId>scalaSwingW</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>efa.nb</groupId>
       <artifactId>scalazW</artifactId>
       <version>${scalaz.version}</version>
     </dependency>

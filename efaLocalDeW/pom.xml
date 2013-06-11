@@ -33,10 +33,6 @@
           <artifactId>scala-library</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.scala-lang</groupId>
-          <artifactId>scala-swing</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.scalaz</groupId>
           <artifactId>scalaz-core_2.10</artifactId>
         </exclusion>
@@ -91,11 +87,6 @@
     <dependency>
       <groupId>efa.nb</groupId>
       <artifactId>scalaW</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>efa.nb</groupId>
-      <artifactId>scalaSwingW</artifactId>
       <version>${scala.version}</version>
     </dependency>
     <dependency>
