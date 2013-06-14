@@ -20,7 +20,10 @@ object StateTransTest extends Properties("StateTrans") {
   }
 
   property("undo one") = forAll { i: Int ⇒ 
-    UI.run(Mod(i+), Undo) ≟ dist(0, i, 0)
+    val res = UI.run(Mod(i+), Undo)
+    val exp = dist(0, i, 0)
+
+    (res ≟ exp) :| s"exp: $exp but was $res"
   }
 
   property("add two, undo two") = forAll { p: (Int,Int) ⇒ 

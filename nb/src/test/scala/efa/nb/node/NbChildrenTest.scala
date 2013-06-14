@@ -33,10 +33,10 @@ object NbChildrenTest
 
     val res = for {
       n    ← NbNode.apply
-      _    = runN(testSF(seqOut, n)(cs), 0)
+      _    = simulate(List(cs), false)(testSF(seqOut, n))
       ca   = n.getChildren.getNodes
       aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
-      _    = runN(testSF(seqOut, n)(rs), 0)
+      _    = simulate(List(rs), false)(testSF(seqOut, n))
       cb   = n.getChildren.getNodes
       bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
       ne   = (ca zip cb).toList ∀ {case (a,b) ⇒ a ne b} :| "equality"
@@ -59,10 +59,10 @@ object NbChildrenTest
 
     val res = for {
       n    ← NbNode.apply
-      _    = runN(testSF(uidOut, n)(cs), 0)
+      _    = simulate(List(cs), false)(testSF(uidOut, n))
       ca   = n.getChildren.getNodes
       aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
-      _    = runN(testSF(uidOut, n)(rs), 0)
+      _    = simulate(List(rs), false)(testSF(uidOut, n))
       cb   = n.getChildren.getNodes
       bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
       eq   = (ca zip cb).toList ∀ {case (a,b) ⇒ a eq b} :| "equality"
@@ -70,7 +70,7 @@ object NbChildrenTest
 
     evalProp (res)
   }
-//
+
   //HList-based
   type NPOut[A] = NodeOut[A,ValSt[Parent]]
 

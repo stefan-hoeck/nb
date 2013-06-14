@@ -3,7 +3,7 @@ package efa.nb.dialog
 import efa.core._
 import efa.nb.{loc, NbSystem}
 import efa.nb.node.Editable
-import dire._, dire.swing.{SwingStrategy, swingSink}
+import dire._, dire.swing.swingSink
 import javax.swing.JDialog
 import org.openide.{DialogDisplayer, DialogDescriptor, NotifyDescriptor}
 import scalaz._, Scalaz._, effect.IO
@@ -51,7 +51,7 @@ trait DialogEditable[-A,+B] extends Editable[A,B] {
     isNew ? editDialog(newTitle(a), a, true) |
             editDialog(editTitle(a), a, false)
 
-  lazy val sf: SF[A,B] = SF sfIO (edit, SwingStrategy) collectO identity
+  lazy val sf: SF[A,B] = SF asyncIO edit collectO identity
 }
 
 object DialogEditable {

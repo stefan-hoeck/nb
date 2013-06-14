@@ -1,12 +1,11 @@
 package efa.nb.controller
 
 import dire._, SF.{id, sfIO, const, loop}
-import dire.swing.{SwingStrategy, UndoEdit}
+import dire.swing.UndoEdit
 import efa.core.{ValRes, ValSt}
 import efa.io.LoggerIO
 import efa.nb.VStSF
 import scalaz._, Scalaz._, effect.IO
-import scalaz.concurrent.Strategy
 
 /** Functions for modelling complex user interfaces
   *
@@ -43,17 +42,14 @@ trait StateTransFunctions {
 
   def complete[Raw:Equal,Calc,World]
     (worldIn: SIn[World],
-     out: Out[UndoEdit],
-     strategy: Option[Strategy] = SwingStrategy)
+     out: Out[UndoEdit])
     (ui: SF[Calc,ValSt[Raw]])
     (calc: (Raw,World) ⇒ Calc, ini: IO[Raw]): SIn[Raw] =
-    uiLoop((uiIn(worldIn)(ui)(calc) ⊹ undoIn(out, strategy)) >=> collectRaw(ini))
+    uiLoop((uiIn(worldIn)(ui)(calc) ⊹ undoIn(out)) >=> collectRaw(ini))
 
-  def completeIsolated[Raw:Equal](ui: SF[Raw,ValSt[Raw]],
-                            out: Out[UndoEdit],
-                            strategy: Option[Strategy] = SwingStrategy)
-                           (ini: IO[Raw])
-    : SIn[Raw] = complete(const(0), out, strategy)(ui)((r,_) ⇒ r, ini)
+  def completeIsolated[Raw:Equal](ui: SF[Raw,ValSt[Raw]], out: Out[UndoEdit])
+                                 (ini: IO[Raw]): SIn[Raw] =
+                                 complete(const(0), out)(ui)((r,_) ⇒ r, ini)
     
   def uiIn[Raw,Calc,World]
     (worldIn: SIn[World])
@@ -71,9 +67,8 @@ trait StateTransFunctions {
   def uiLoop[A](sf: SF[A \/ A, A \/ A]): SIn[A] = loop(sf) map fold[A] in
     
 
-  def undoIn[A](out: Out[UndoEdit], strategy: Option[Strategy])
-    : SF[A \/ A, Input[A]] =
-    dire.swing.undo sf (out, strategy) map undoToInput[A]
+  def undoIn[A](out: Out[UndoEdit]): SF[A \/ A, Input[A]] =
+    dire.swing.undo sf out map undoToInput[A]
 
   def undoToInput[A](a: A): Input[A] = _ ⇒ a.left
 

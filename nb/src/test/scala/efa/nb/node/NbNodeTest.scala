@@ -24,7 +24,7 @@ object NbNodeTest
   }
 
   property("desc") = Prop.forAll { s: String ⇒
-    outTest(s, desc[String] (identity), _.getShortDescription, s)
+    outTest(s, desc[String](identity), _.getShortDescription, s)
   }
 
   case class Cc (s: String)
@@ -64,12 +64,12 @@ object NbNodeTest
       List(Edited(cc).i)
   }
 
-  def testSF[A,B](no: NodeOut[A,B], n: NbNode)(ini: A): SIn[B] =
-    SF.const(ini) >=> no.sfST(n, Sequential)
+  def testSF[A,B](no: NodeOut[A,B], n: NbNode): Out[Any] ⇒ IO[SF[A,B]] =
+    o ⇒ IO(no sfSim (n, o))
 
   def outTest[A,B:Equal,C](
     a: A, out: NodeOut[A,C], get: NbNode ⇒ B, must: B
-  ): Prop = outTestIO (a, out, get map (IO(_)), must)
+  ): Prop = outTestIO(a, out, get map (IO(_)), must)
 
   def outTestIO[A,B:Equal,C](
     a: A, out: NodeOut[A,C], get: NbNode ⇒ IO[B], must: B
@@ -78,7 +78,7 @@ object NbNodeTest
 
     def res = for {
       n ← NbNode.apply
-      _ = runN(testSF(out, n)(a), 0)
+      _ = simulate(List(a), false)(testSF(out, n))
       b ← get(n)
     } yield (b ≟ must) :| msg(b)
 
@@ -95,7 +95,11 @@ object NbNodeTest
   case class Destroyed(cc: Cc) extends Input
   case class Edited(cc: Cc) extends Input
 
-  private def eventSf(cc: Cc)(o: Out[Unit]): IO[SF[Event,Input]] = for {
+  //Simulate user input: First set data of cc at node, (o is informed if that
+  //has happened). The fire event wichi is processed through 'onE'.
+  //when the processed event reaches the end of the signal function, o
+  //is informed again
+  private def eventSf(cc: Cc)(o: Out[Any]): IO[SF[Event,Input]] = for {
     n  ← NbNode()
     sf ← IO {
            def onE(e: Event): IO[Unit] = e match {
@@ -105,13 +109,13 @@ object NbNodeTest
                                 _.cata(e ⇒ IO(e.edit()), IO.ioUnit) }
            }
 
-           val nodeOut: NodeOut[Unit,Input] = 
-             (edit[Cc] map { Edited(_).i } contramap { _: Unit ⇒ cc }) ⊹
-             (renameV map { Renamed(_).i } contramap { _ ⇒ nameVal }) ⊹
-             (destroy[Cc] map { Destroyed(_).i } contramap { _ ⇒ cc }) ⊹
-             NodeOut[Unit,Input]((_,_) ⇒ o)
+           val nodeOut: NodeOut[Cc,Input] = 
+             edit[Cc].map(Edited(_).i) ⊹
+             (renameV map (Renamed(_).i) contramap (_ ⇒ nameVal)) ⊹
+             destroy[Cc].map(Destroyed(_).i)
            
-           (SF.id[Event] syncTo onE) >> (once(()) >=> nodeOut.sf(n))
+           (SF.id[Event] syncTo onE) >> 
+           (once(cc) andThen nodeOut.sfSim(n, o) syncTo o)
          }
   } yield sf
 }

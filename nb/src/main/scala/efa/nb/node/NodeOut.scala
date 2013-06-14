@@ -1,8 +1,7 @@
 package efa.nb.node
 
-import dire._, dire.swing.SwingStrategy
+import dire._, dire.swing.swingOut
 import scalaz._, Scalaz._, effect.IO
-import scalaz.concurrent.Strategy
 
 case class NodeOut[-A,+B](run: (Out[B], NbNode) ⇒ Out[A]) {
   def andThen[C](c: NodeOut[B,C]): NodeOut[A,C] = 
@@ -38,11 +37,10 @@ case class NodeOut[-A,+B](run: (Out[B], NbNode) ⇒ Out[A]) {
   def merge[C<:A,D>:B] (that: ⇒ NodeOut[C,D]): NodeOut[C,D] = 
     NodeOut((od,n) ⇒ (run(od,n): Out[C]) ⊹ that.run(od,n))
 
-  def sf(n: NbNode): SF[A,B] = sfST(n, SwingStrategy)
+  def sf(n: NbNode): SF[A,B] = SF.connectSync(o ⇒ swingOut(run(o,n)))
 
-  //for testing
-  def sfST(n: NbNode, st: Option[Strategy]): SF[A,B] =
-    SF.connectOuts(run(_,n), st)
+  def sfSim(n: NbNode, o: Out[Any]): SF[A,B] =
+    this merge NodeOut[Any,Nothing]((_, _) ⇒ o) sf n
 
   def withIn[C<:A,D](f: (C,B) ⇒ D): NodeOut[C,D] =
     NodeOut[C,D]((od, n) ⇒ c ⇒ {

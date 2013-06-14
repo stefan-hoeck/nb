@@ -18,7 +18,7 @@ object UINode extends dire.util.TestFunctions {
   sealed trait Event
   case class Rename(s: String) extends Event
 
-  private def sf(o: Out[Unit]): IO[SF[Event,String]] = for {
+  private def sf(o: Out[Any]): IO[SF[Event,String]] = for {
     n  ← NbNode()
     sf ← IO {
            def onE(e: Event): IO[Unit] = e match {
@@ -28,10 +28,10 @@ object UINode extends dire.util.TestFunctions {
            def undoOut: Out[UndoEdit] = u ⇒ IO.ioUnit
 
            def uiSF: SF[String,ValSt[String]] =
-             out sfST (n, Sequential) map (put(_).success)
+             out sfSim (n, o) map (put(_).success)
 
            (id[Event] syncTo onE) >>
-           completeIsolated(uiSF, undoOut, Sequential)(IO("boo"))
+           completeIsolated(uiSF, undoOut)(IO("boo"))
          }
   } yield sf
 }

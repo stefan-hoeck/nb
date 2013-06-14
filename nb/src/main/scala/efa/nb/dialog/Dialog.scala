@@ -1,7 +1,7 @@
 package efa.nb.dialog
 
 import dire.DataSink
-import dire.swing.{SwingStrategy, Elem}
+import dire.swing.{Elem, swingSink}
 import org.openide.{DialogDisplayer, NotifyDescriptor}
 import scalaz.Scalaz._, scalaz.effect.IO
 
@@ -16,8 +16,7 @@ sealed trait Dialog {
     b ← displayMessage(p.peer, title)
   } yield b
 
-  final val sink: DataSink[String] = 
-    DataSink.cached(msg(_).void, self, IO.ioUnit, SwingStrategy)
+  final val sink: DataSink[String] = swingSink(msg(_).void)
   
   /**
    * Displays the message object in a modal dialog

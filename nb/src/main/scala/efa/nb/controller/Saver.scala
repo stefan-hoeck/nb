@@ -1,8 +1,8 @@
 package efa.nb.controller
 
 import dire._
-import dire.swing.SwingStrategy
 import dire.control.Var
+import dire.swing.swingOut
 import dire.util.save.{SaveOut, withHandler}
 import org.netbeans.spi.actions.AbstractSavable
 import org.netbeans.api.actions.Savable
@@ -32,7 +32,7 @@ object Saver {
         case _                         ⇒ create(IO.ioUnit, false)
       }
 
-      withHandler(SF.connectOuts(connect, SwingStrategy))
+      withHandler(SF connectSync (o ⇒ swingOut(connect(o))))
     }
 }
 

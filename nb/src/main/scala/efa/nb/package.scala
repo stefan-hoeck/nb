@@ -16,11 +16,13 @@ package object nb {
 
   private[nb] lazy val pref = Service.unique[TcPreferences](TcPreferences)
 
-  lazy val NbSystem = ReactiveSystem().unsafePerformIO()
+  lazy val NbSystem = ReactiveSystem(reactiveLog).unsafePerformIO()
 
   def action(name: String)(run: () ⇒ Unit): Action = new AbstractAction(name) {
     override def actionPerformed(e: java.awt.event.ActionEvent) { run() }
   }
+
+  private def reactiveLog(s: String) = pref.tcLogger flatMap (_ debug s)
 }
 
 // vim: set ts=2 sw=2 et:
