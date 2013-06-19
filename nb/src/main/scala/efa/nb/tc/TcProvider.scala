@@ -4,30 +4,30 @@ import efa.nb.pref
 import org.openide.windows.{TopComponent, WindowManager}
 import scalaz._, Scalaz._, effect._
 
-abstract class TcProvider[Tc] (
-    factory: IO[Tc],
-    val preferredId: String)
-    (implicit m: Manifest[Tc]) {
+abstract class TcProvider[A:AsTc,B](implicit m: Manifest[B]) {
   import TcProvider._
-  private[this] lazy val inst = factory.unsafePerformIO()
+
+  private[this] lazy val inst = tcc.newInstance.asInstanceOf[B]
 
   private[this] val tcc = m.runtimeClass
 
-  private[this] def getDef: IO[Tc] = for {
+  private[this] def getDef: IO[B] = for {
     l    ← pref.tcLogger
-    _    ← l debug s"Get default incstance for $preferredId"
+    _    ← l debug s"Get default incstance for $id"
   } yield inst
 
-  private[this] def findInst: IO[Tc] = for {
+  private[this] def findInst: IO[B] = for {
     l  ← pref.tcLogger
-    _  ← l debug ("Searching instance for " + preferredId)
-    tc ← IO(WindowManager.getDefault().findTopComponent(preferredId))
+    _  ← l debug (s"Searching instance for $id")
+    tc ← IO(WindowManager.getDefault().findTopComponent(id))
     r  ← tc match {
-           case null ⇒  l.warn(notFound(preferredId)) >> getDef
-           case w if(tcc isAssignableFrom w.getClass) ⇒ IO(w.asInstanceOf[Tc])
-           case _ ⇒ l.warn(multipleFound(preferredId)) >> getDef
+           case null ⇒  l.warn(notFound(id)) >> getDef
+           case w if(tcc isAssignableFrom w.getClass) ⇒ IO(w.asInstanceOf[B])
+           case _ ⇒ l.warn(multipleFound(id)) >> getDef
          }
   } yield r
+
+  def id = AsTc[A].preferredId
 
   /**
    * Gets default instance. Do not use directly:
@@ -36,13 +36,13 @@ abstract class TcProvider[Tc] (
    * get a non-deserialized instance.
    * To obtain the singleton instance, use {@link #findInstance}.
    */
-  def getDefault: Tc = getDef.unsafePerformIO
+  def getDefault: B = getDef.unsafePerformIO
 
   /**
    * Obtain the TopComponent instance.
    * Never call {@link #getDefault} directly!
    */
-  def findInstance: Tc = findInst.unsafePerformIO
+  def findInstance: B = findInst.unsafePerformIO
 }
 
 object TcProvider {

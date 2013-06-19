@@ -1,54 +1,53 @@
 package efa.nb.tc
 
 import efa.core.Log, efa.core.Efa._
-import efa.io._
+import efa.io._, EfaIO._
 import java.util.prefs.Preferences
 import org.openide.util.NbPreferences
 import scalaz._, Scalaz._, effect._
 
-trait PersistentComponent extends LogDisIOFunctions with LogDisIOInstances {
+trait Persistent[A] {
+  def version: String
 
-  final def read: IO[Unit] = {
+  def preferredId: String
+
+  lazy val tag = s"$preferredId %s $version"
+
+  final def read(a: A): IO[Unit] = {
     def doRead = for {
-      _ ← info ("Reading " + prefId)
+      _ ← info(s"Reading $preferredId")
       p ← prefs
-      _ ← (p.get(prefId + "%s version", null) == version) ?
-          readProps(p) |
-          ldiUnit
-      _ ← liftIO(persistentChildren foldMap (_.read))
+      _ ← (p.get(tag, null) == version) ? readProps(p, a) | ldiUnit
     } yield ()
 
     logger >>= (_ logDisZ doRead)
   }
 
   protected def logger: IO[LoggerIO] = efa.nb.pref.tcLogger
-
-  protected def persistentChildren: List[PersistentComponent] = Nil 
-
-  protected def prefId: String
-
-  protected def version: String
   
   protected def prefs: LogDisIO[Preferences] = {
-    val res = liftIO (IO (NbPreferences.forModule(getClass)))
-    except (res, _ ⇒ "Unable to load preferences for " + getClass)
+    val res = point(NbPreferences forModule getClass)
+    except(res, _ ⇒ "Unable to load preferences for " + getClass)
   }
   
-  protected def readProps(prefs: Preferences): LogDisIO[Unit] = ldiUnit
+  protected def readProps(prefs: Preferences, a: A): LogDisIO[Unit] = ldiUnit
   
-  protected def writeProps(prefs: Preferences): LogDisIO[Unit] = ldiUnit
+  protected def writeProps(prefs: Preferences, a: A): LogDisIO[Unit] = ldiUnit
   
-  final def persist: IO[Unit] = {
+  final def persist(a: A): IO[Unit] = {
     def doPersist = for {
-      _ ← info ("Persisting " + prefId)
+      _ ← info (s"Persisting $preferredId")
       p ← prefs
-      _ ← liftIO (IO (p.put(prefId + "%s version", version)))
-      _ ← writeProps(p)
-      _ ← liftIO (persistentChildren foldMap (_.persist))
+      _ ← point(p.put(tag, version))
+      _ ← writeProps(p, a)
     } yield ()
 
     logger >>= (_ logDisZ doPersist)
   }
+}
+
+object Persistent {
+  def apply[A](implicit A: Persistent[A]): Persistent[A] = A
 }
 
 // vim: set ts=2 sw=2 et:
