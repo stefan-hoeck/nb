@@ -3,7 +3,6 @@ package efa.nb
 import dire.{Out, DataSource, SIn, SF}
 import efa.core.syntax.lookup.{LookupOps ⇒ LOps}
 import org.openide.util.{Lookup, LookupListener, LookupEvent}
-import scala.reflect.runtime.universe.TypeTag
 import scalaz.effect.IO
 
 object lookup {
