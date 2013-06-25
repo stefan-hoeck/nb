@@ -3,11 +3,17 @@ package efa.nb
 import dire.{Out, DataSource, SIn, SF}
 import efa.core.syntax.lookup.{LookupOps ⇒ LOps}
 import org.openide.util.{Lookup, LookupListener, LookupEvent}
+import org.openide.util.lookup.ProxyLookup
 import scalaz.effect.IO
 
 object lookup {
   implicit class LookupOps(val l: Lookup) extends AnyVal {
     def results[A:Manifest]: SIn[List[A]] = SF.src(l)(src[A])
+  }
+
+  implicit val LookupMonoid = new scalaz.Monoid[Lookup] {
+    val zero = Lookup.EMPTY
+    def append(a: Lookup, b: ⇒ Lookup): Lookup = new ProxyLookup(a, b)
   }
 
   private def lops(l: Lookup): LOps = l

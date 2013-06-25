@@ -1,11 +1,8 @@
 package efa.nb.tc
 
-import org.openide.explorer.{ExplorerManager, ExplorerUtils}
-import org.openide.util.{Lookup, NbPreferences}
-import org.openide.util.lookup.ProxyLookup
+import org.openide.explorer.ExplorerManager
 import org.openide.windows.TopComponent
 import java.awt.BorderLayout
-import java.util.prefs.Preferences
 import scala.collection.mutable.{ArrayBuffer, SynchronizedBuffer}
 import scalaz._, Scalaz._, effect.IO
 

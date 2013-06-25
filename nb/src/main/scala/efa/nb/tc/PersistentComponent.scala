@@ -17,7 +17,7 @@ trait Persistent[A] {
     def doRead = for {
       _ ← info(s"Reading $preferredId")
       p ← prefs
-      _ ← (p.get(tag, null) == version) ? readProps(p, a) | ldiUnit
+      _ ← (p.get(tag, null) == version) ? readProps(a).run(p) | ldiUnit
     } yield ()
 
     logger >>= (_ logDisZ doRead)
@@ -30,16 +30,16 @@ trait Persistent[A] {
     except(res, _ ⇒ "Unable to load preferences for " + getClass)
   }
   
-  protected def readProps(prefs: Preferences, a: A): LogDisIO[Unit] = ldiUnit
+  protected def readProps(a: A): WithPrefs[Unit] = withPrefs(_ ⇒ ldiUnit)
   
-  protected def writeProps(prefs: Preferences, a: A): LogDisIO[Unit] = ldiUnit
+  protected def writeProps(a: A): WithPrefs[Unit] = withPrefs(_ ⇒ ldiUnit)
   
   final def persist(a: A): IO[Unit] = {
     def doPersist = for {
       _ ← info (s"Persisting $preferredId")
       p ← prefs
       _ ← point(p.put(tag, version))
-      _ ← writeProps(p, a)
+      _ ← writeProps(a) run p
     } yield ()
 
     logger >>= (_ logDisZ doPersist)
