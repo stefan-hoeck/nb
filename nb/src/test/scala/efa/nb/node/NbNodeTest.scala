@@ -77,7 +77,7 @@ object NbNodeTest
     def msg (b: B) = s"Failure for input $a: Expected $must but was $b"
 
     def res = for {
-      n ← NbNode.apply
+      n ← NbNode()
       _ = simulate(List(a), false)(testSF(out, n))
       b ← get(n)
     } yield (b ≟ must) :| msg(b)

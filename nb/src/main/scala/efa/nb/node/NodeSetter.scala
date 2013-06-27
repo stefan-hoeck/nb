@@ -4,6 +4,7 @@ import dire.Out
 import scalaz._, Scalaz._, scalaz.effect.{IO, IORef}
 
 private[node] final class NodeSetter (
+  val isLeaf: Boolean,
   val out: IORef[Out[NbNode]],
   val node: IORef[Option[NbNode]]
 ) {
@@ -20,13 +21,13 @@ private[node] final class NodeSetter (
 
 object NodeSetter {
 
-  val apply: IO[NodeSetter] = ^(
+  def apply(isLeaf: Boolean): IO[NodeSetter] = ^(
     IO.newIORef((_: NbNode) ⇒ IO.ioUnit),
     IO.newIORef(none[NbNode])
-  )(new NodeSetter(_, _))
+  )(new NodeSetter(isLeaf, _, _))
 
-  def out (out: Out[NbNode]): IO[NodeSetter] = for {
-    ns ← apply
+  def out(out: Out[NbNode], isLeaf: Boolean): IO[NodeSetter] = for {
+    ns ← apply(isLeaf)
     _  ← ns setOut out
   } yield ns
 }

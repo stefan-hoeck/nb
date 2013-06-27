@@ -32,7 +32,7 @@ object NbChildrenTest
     val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
 
     val res = for {
-      n    ← NbNode.apply
+      n    ← NbNode()
       _    = simulate(List(cs), false)(testSF(seqOut, n))
       ca   = n.getChildren.getNodes
       aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
@@ -58,7 +58,7 @@ object NbChildrenTest
     val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
 
     val res = for {
-      n    ← NbNode.apply
+      n    ← NbNode()
       _    = simulate(List(cs), false)(testSF(uidOut, n))
       ca   = n.getChildren.getNodes
       aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"

@@ -1,6 +1,5 @@
 package efa.nb.node
 
-import scalaz._, Scalaz._, effect.{IO, IORef}
 import efa.core._, Efa._
 import efa.nb.PureLookup
 import efa.nb.dialog.DialogEditable
@@ -11,16 +10,18 @@ import java.beans.PropertyEditor
 import javax.swing.Action
 import org.openide.nodes.{Children, AbstractNode, Sheet, Node, NodeTransfer}
 import shapeless.{HList, ::}
+import scalaz._, Scalaz._, effect.{IO, IORef}
 
 object NbNode extends NbNodeFunctions {
-  def apply(): IO[NbNode] = for {
-    hc  ← NbChildren.create
+  def apply(isLeaf: Boolean = false): IO[NbNode] = for {
+    hc  ← if (!isLeaf) NbChildren.create map (_.some)
+          else IO(none)
     lkp ← PureLookup.apply
     res ← IO (new NbNode (lkp, hc))
   } yield res
 
-  def create (ns: NodeSetter): IO[NbNode] = for {
-    res ← apply
+  def create(ns: NodeSetter): IO[NbNode] = for {
+    res ← apply(ns.isLeaf)
     _   ← ns setNode res
   } yield res
 
@@ -343,8 +344,9 @@ trait NbNodeFunctions {
 
 final class NbNode private (
   lkp: PureLookup,
-  private[node] val hc: NbChildren
-) extends PureNode (hc, lkp.l) with ContextActionNode {
+  private[node] val hc: Option[NbChildren]
+) extends PureNode (hc getOrElse Children.LEAF, lkp.l)
+  with ContextActionNode {
 
   // *** Cookies ***
   

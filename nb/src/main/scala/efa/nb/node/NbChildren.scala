@@ -91,17 +91,13 @@ trait NbChildrenFunctions {
     * @tparam A The type of objects to be displayed in a `Node`
     * @tparam B The input type fired by the `Node` upon user input
     */
-  def singleF[A,B] (out: NodeOut[A,B]): Factory[A,B] =
+  def singleF[A,B](out: NodeOut[A,B]): Factory[A,B] =
     pairsF[Unit,A,B,Id](out) ∙ { a: A ⇒ ((), a) }
 
   /** Displays a list of objects each in a `Node`.
     *
     * New `Node`s are created every time the sequence
-    * changes, therefore this factory is usually not
-    * well suited for `Node`s that have children,
-    * since those will be in a collapsed state whenever
-    * a new sequence is displayed, no matter what the
-    * previos state of the `Node`s was.
+    * changes and they can't have children.
     *
     * @tparam A The type of objects to be displayed in a `Node`
     * @tparam B The input type fired by the `Node` upon user input
@@ -109,7 +105,7 @@ trait NbChildrenFunctions {
   def leavesF[A,B,C,F[_]:Traverse] 
     (out: NodeOut[A,B])
     (get: C ⇒ F[A]): Factory[C,B] = (ob,c, _) ⇒ {
-      def setter(a: A) = create(out)(ob, a)
+      def setter(a: A) = create(out, true)(ob, a)
 
       get(c) traverse setter map { ss ⇒ (Map.empty, ss.toIndexedSeq) }
     }
@@ -165,6 +161,56 @@ trait NbChildrenFunctions {
       p: P ⇒ U pairs P.childrenList(p).sortWith(sorter)
     }
 
+  /** Displays a container of objects each in a `Node`.
+    *
+    * This function takes an implicit `efa.core.Parent` instance
+    * to determine the children of `P`. Children are displayed in
+    * the same order as returned by `Parent.children`.
+    *
+    * Note that the nodes thus created are leaf nodes and cannot
+    * have children
+    *
+    * @tparam F  The container type in which children are stored
+    * @tparam P  The parent type
+    * @tparam C  The child type
+    * @tparam X  The input type fired by the `Node` upon user input
+    * @tparam Id Type of unique identifiers used to distinguish children
+    */
+  def parentLeafF[F[_],P,C,X]
+    (out: NodeOut[C,X])
+    (implicit P: Parent[F,P,C]): Factory[P,X] = {
+      implicit val t = P.T
+
+      leavesF(out)(P.children)
+    }
+
+  /** Same as `parentLeafF` but items are sorted by name before being displayed.
+    *
+    * @tparam F  The container type in which children are stored
+    * @tparam P  The parent type
+    * @tparam C  The child type
+    * @tparam X  The input type fired by the `Node` upon user input
+    * @tparam Id Type of unique identifiers used to distinguish children
+    */
+  def parentNamedLeafF[F[_],P,C,X]
+    (out: NodeOut[C,X])
+    (implicit N: Named[C], P: Parent[F,P,C]): Factory[P,X] =
+    leavesF(out)(P.sortedChildren)
+
+  /** Same as `parentLeafF` but items are sorted before being displayed.
+    *
+    * @tparam F  The container type in which children are stored
+    * @tparam P  The parent type
+    * @tparam C  The child type
+    * @tparam X  The input type fired by the `Node` upon user input
+    * @tparam Id Type of unique identifiers used to distinguish children
+    */
+  def parentSortedLeafF[F[_],P,C,X,Id]
+    (out: NodeOut[C,X])
+    (sorter: (C,C) ⇒ Boolean)
+    (implicit P: Parent[F,P,C]): Factory[P,X] =
+    leavesF(out)(P.childrenList(_).sortWith(sorter))
+
   def uidF[Id,A,B,C,F[_]:Traverse]
     (out: NodeOut[B,C])
     (get: A ⇒ F[B])
@@ -182,7 +228,8 @@ trait NbChildrenFunctions {
     (oc, abs, m) ⇒ {
       def setterPair (p: (K,A)): IO[(Any,NodeSetter)] = p match {
         case (a,b) ⇒ 
-          m get a cata (display(out)(oc, b), create(out)(oc, b)) strengthL a 
+          m get a cata (display(out)(oc, b),
+                        create(out, false)(oc, b)) strengthL a 
       }
       
       for {
@@ -195,19 +242,22 @@ trait NbChildrenFunctions {
     (ob, n) ⇒ a ⇒ {
 
       def single (p: (Factory[A,B],Int)): IO[FullInfo] = for {
-        sm ← n.hc mapAt p._2
+        sm ← n.hc cata (_ mapAt p._2, IO(Map.empty[Any, NodeSetter]))
         si ← p._1 (ob, a, sm)
       } yield (Map (p._2 -> si._1), si._2)
 
-      fs.toList.zipWithIndex foldMap single flatMap n.hc.set
+      def set(f: FullInfo) = n.hc cata (_ set f, IO.ioUnit)
+
+      fs.toList.zipWithIndex foldMap single flatMap set
     }
   )
 
   private def display[A,B] (no: NodeOut[A,B])(ob: Out[B], a: A)(s: NodeSetter) =
     s setOut (n ⇒ no.run(ob, n)(a)) as s
 
-  private def create[A,B] (no: NodeOut[A,B])(ob: Out[B], a: A) =
-    NodeSetter.apply >>= display(no)(ob, a)
+  private def create[A,B](no: NodeOut[A,B], isLeaf: Boolean)
+                         (ob: Out[B], a: A) =
+    NodeSetter(isLeaf) >>= display(no)(ob, a)
 }
 
 // vim: set ts=2 sw=2 et:
