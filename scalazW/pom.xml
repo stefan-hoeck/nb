@@ -10,7 +10,7 @@
   <groupId>efa.nb</groupId>
   <artifactId>scalazW</artifactId>
   <packaging>nbm</packaging>
-  <version>7.0.0</version>
+  <version>7.0.3</version>
 
   <name>Scalaz Wrapper</name>
 
