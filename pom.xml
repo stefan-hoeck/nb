@@ -48,7 +48,7 @@
 
   <properties>
     <akka.version>2.1.0</akka.version>
-    <scala.version>2.10.2</scala.version>
+    <scala.version>2.10.3</scala.version>
     <scalaz.version>7.0.3</scalaz.version>
     <shapeless.version>1.2.3</shapeless.version>
     <scalacheck.version>1.10.0</scalacheck.version>
