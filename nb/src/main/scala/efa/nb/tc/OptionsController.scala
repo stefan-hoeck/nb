@@ -11,7 +11,7 @@ import org.netbeans.spi.options.OptionsPanelController
 import org.openide.util.Lookup
 import scalaz._, Scalaz._, effect.IO
 
-class OptionsController[A,B](create: IO[(Elem, VSIn[A])], set: Out[A])
+class OptionsController[A](create: IO[(Elem, VSIn[A])], set: Out[A])
 extends OptionsPanelController {
   private[this] val pcs = new PropertyChangeSupport(this)
   private[this] var chngd = false
