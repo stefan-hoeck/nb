@@ -111,6 +111,7 @@ object OutlineNb {
     DataSource.signalSrcInpure((_: OutlineNb).selNames){
       op ⇒ out ⇒
         val li = listener(op, out)
+        op.outline.setColumnSelectionAllowed(true)
         op.outline.getColumnModel.addColumnModelListener(li)
 
         _ ⇒ op.outline.getColumnModel.removeColumnModelListener(li)

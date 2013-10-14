@@ -21,7 +21,7 @@ abstract class Tc[A](implicit A: AsTc[A])
     A explorerMgr a getOrElse new ExplorerManager
 
   final private[tc] def doOpen = 
-    A.initialize(a)(cleanup write _) >> A.read(a) >> Tc.add(this)
+    A.read(a) >> A.initialize(a)(cleanup write _) >> Tc.add(this)
 
   final private[tc] def doClose = 
     Tc.remove(this) >>
