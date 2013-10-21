@@ -22,7 +22,7 @@ package object nb {
     override def actionPerformed(e: java.awt.event.ActionEvent) { run() }
   }
 
-  private def reactiveLog(s: String) = pref.tcLogger flatMap (_ debug s)
+  private def reactiveLog(s: String) = efa.io.LoggerIO.consoleLogger debug s
 }
 
 // vim: set ts=2 sw=2 et:
