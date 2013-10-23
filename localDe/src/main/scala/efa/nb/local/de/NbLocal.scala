@@ -3,6 +3,8 @@ package efa.nb.local.de
 import efa.nb.spi.NbLoc
 
 class NbLocal extends NbLoc {
+  def confirmOverwrite (p: String): String =
+    s"Datei $p existiert bereits. Soll sie überschrieben werden?"
 
   def editTitle (s: String) = "%s editieren" format s
 

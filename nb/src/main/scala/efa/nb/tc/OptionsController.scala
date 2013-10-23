@@ -15,7 +15,7 @@ class OptionsController[A](create: IO[(Elem, VSIn[A])], set: Out[A])
 extends OptionsPanelController {
   private[this] val pcs = new PropertyChangeSupport(this)
   private[this] var chngd = false
-  private[this] var pnl: Option[(Panel,VSIn[A])] = None
+  private[this] var pnl: Option[(Panel,SIn[A])] = None
   private[this] var stop: Option[IO[Unit]] = None
   private[this] var valRes: ValRes[A] = "".failureNel
   private[this] val fire = Var newVar none[Unit] unsafePerformIO
@@ -38,7 +38,7 @@ extends OptionsPanelController {
     pcs.removePropertyChangeListener(l);
   }
 
-  private[this] def getPnl: IO[(Panel,VSIn[A])] = for {
+  private[this] def getPnl: IO[(Panel,SIn[A])] = for {
     op   ← IO(pnl)
     res  ← op.fold(createPnl)(IO(_))
   } yield res
@@ -78,11 +78,12 @@ extends OptionsPanelController {
     _   ← setChanged(false)
   } yield ()
 
-  private[this] def createPnl: IO[(Panel,VSIn[A])] = for {
+  private[this] def createPnl: IO[(Panel,SIn[A])] = for {
     p     ← create
     panel ← p._1.panel
-    _     ← IO(pnl = (panel, p._2).some)
-  } yield (panel, p._2)
+    in    = sf(p._2)
+    _     ← IO(pnl = (panel, in).some)
+  } yield (panel,in) 
 
   private[this] def sf(in: VSIn[A]) = {
     val fireIn = fire.in collectO identity

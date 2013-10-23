@@ -1,6 +1,8 @@
 package efa.nb.spi
 
 trait NbLoc {
+  def confirmOverwrite (p: String): String
+
   def editTitle (s: String): String
 
   def fileRenamed (o: String, n: String): String
@@ -23,6 +25,8 @@ trait NbLoc {
  * Default localization (English)
  */
 object NbLoc extends NbLoc {
+  def confirmOverwrite (p: String): String =
+    s"File $p already exists. Do you want to overwrite it?"
 
   def editTitle (s: String) = "Edit %s" format s
 
