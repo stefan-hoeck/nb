@@ -7,28 +7,53 @@ import efa.nb.{lookup, PureLookup}, lookup._
 import efa.io.EfaIO._
 import java.awt.BorderLayout
 import java.util.Properties
+import javax.swing.table.TableColumn
 import javax.swing.event.{TableColumnModelListener ⇒ TCML,
                           TableColumnModelEvent,
                           ChangeEvent, ListSelectionEvent}
 import javax.swing.JPanel
+import java.util.prefs.Preferences
+import java.util.{List ⇒ JList}
 import org.openide.explorer.{ExplorerManager, ExplorerUtils}
 import org.openide.explorer.view.OutlineView
 import org.openide.nodes.Node
 import org.openide.util.Lookup
+import org.netbeans.swing.etable.ETableColumnModel
 import scala.collection.JavaConversions._
 import scalaz._, Scalaz._, scalaz.effect.IO
 
-final class OutlineNb(val peer: OutlineNb.Peer) {
+final class OutlineNb(
+  val peer: OutlineNb.Peer,
+  val ls: List[Localization]
+) {
   import OutlineNb._
+
+  def model = outline.getColumnModel.asInstanceOf[ETableColumnModel]
 
   def lookup: Lookup = peer.getLookup
 
   def outline = peer.view.getOutline
 
+  //Another ugly hack. This API is SO broken. Using reflection to
+  //access the hidden columns in the column model.
+  def columns: IO[List[(TableColumn,Boolean)]] = IO{
+    val field = classOf[ETableColumnModel].getDeclaredField("hiddenColumns")
+    field.setAccessible(true)
+    val cs = field.get(model).asInstanceOf[JList[TableColumn]].toList
+    (cs ::: model.getColumns.toList) map (c ⇒ (c, model isColumnHidden c))
+  }
+
   def selectedColumns: SIn[List[String]] = SF cachedSrc this
 
   private def selNames: List[String] =
     outline.getSelectedColumns.toList map outline.getColumnName
+
+  def columnNames = outline.getColumnModel match {
+    case etcm: ETableColumnModel ⇒ {
+        etcm.getColumns.toList map (_.getHeaderValue.toString)
+      }
+    case _ ⇒ Nil
+  }
 
   def adjustLocalization(locs: List[Localization]): IO[Unit] = IO {
     locs foreach {l ⇒ peer.view.addPropertyColumn(l.name, l.shortName, l.desc)}
@@ -49,15 +74,8 @@ final class OutlineNb(val peer: OutlineNb.Peer) {
       for {
         rh ← point(p.getInt(prefId + RowHeight, MinRowHeight))
         _  ← liftIO(rowHeightSet(rh))
-        _  ← try {
-               val ps = propsFromArray(p.getByteArray(prefix(prefId), Array()))
-               peer.view.readSettings(ps, prefix(prefId))
-               ldiUnit 
-             } catch {
-               //do nothing, happens when no settings where stored
-               case e: NullPointerException ⇒ ldiUnit
-               case e: Exception ⇒  warning(readError(e, prefId))
-             }
+        cs ← liftIO(columns)
+        _  ← point(restore(prefId, p, cs))
       } yield ()
     }
 
@@ -66,11 +84,46 @@ final class OutlineNb(val peer: OutlineNb.Peer) {
       for {
         rh ← liftIO(rowHeight)
         _  ← point(p.putInt(prefId + RowHeight, rh))
-        ps ← point(new Properties)
-        _  ← point(peer.view.writeSettings(ps, prefix(prefId)))
-        _  ← point(p.putByteArray(prefix(prefId), propsToArray(ps)))
+        cs ← liftIO(columns)
+        _  ← point(persist(prefId, p, cs))
       } yield ()
     }
+
+  private def persist(
+    prefId: String,
+    p: Preferences,
+    cs: List[(TableColumn,Boolean)]
+  ) = {
+    p.putInt(s"${prefId}-CC", cs.size)
+
+    cs.zipWithIndex foreach { case ((c,h),i) ⇒ 
+      p.put(s"$prefId${i}Header", c.getHeaderValue.toString)
+      p.putBoolean(s"$prefId${i}Hidden", h)
+      p.putInt(s"$prefId${i}Width", c.getPreferredWidth)
+    }
+  }
+
+  private def restore(
+    prefId: String,
+    p: Preferences,
+    cs: List[(TableColumn,Boolean)]
+  ) = {
+    val cc = p.getInt(s"${prefId}-CC", 0)
+    
+    0 until cc foreach { i ⇒ 
+      val h = p.get(s"$prefId${i}Header", "")
+      cs foreach { case (c,_) ⇒ 
+        if (c.getHeaderValue.toString ≟ h) {
+          model.setColumnHidden(c, p.getBoolean(s"$prefId${i}Hidden", false))
+
+          p.getInt(s"$prefId${i}Width", -1) match {
+            case -1 ⇒ ()
+            case x  ⇒ c.setPreferredWidth(x)
+          }
+        }
+      }
+    }
+  }
 
 }
 
@@ -93,7 +146,7 @@ object OutlineNb {
               ov
             }
       res ← IO {
-              val o = new OutlineNb(new Peer(ov, rootNode, pl))
+              val o = new OutlineNb(new Peer(ov, rootNode, pl), localizations)
               o.peer.actionMap.put("EnlargeAction", 
                 efa.nb.action(""){o.enlarge.unsafePerformIO})
 
@@ -153,31 +206,11 @@ object OutlineNb {
     override def getExplorerManager = mgr
   }
 
-  import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
-
-  private def propsToArray(ps: Properties): Array[Byte] = {
-    val os = new ByteArrayOutputStream
-
-    ps.store(os, "")
-    os.close()
-
-    os.toByteArray
-  }
-
-  private def propsFromArray (bs: Array[Byte]): Properties = {
-    val in = new ByteArrayInputStream(bs)
-    val ps = new Properties
-
-    ps.load(in)
-    in.close()
-
-    ps
-  }
-
   private def prefix(id: String) = id + OutlineView
 
   private def readError(e: Exception, prefId: String) = 
     s"Error when reading props for $prefId: $e"
+
 }
 
 trait OutlineTc[A] extends AsTc[A] {
