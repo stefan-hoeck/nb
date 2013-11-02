@@ -22,7 +22,12 @@ package object nb {
     override def actionPerformed(e: java.awt.event.ActionEvent) { run() }
   }
 
-  private def reactiveLog(s: String) = efa.io.LoggerIO.consoleLogger debug s
+  private final val EnableLogging = "NbSystem.loggingEnabled"
+
+  private lazy val reactiveLog = System.getProperty(EnableLogging) match {
+    case "true" ⇒ (s: String) ⇒ efa.io.LoggerIO.consoleLogger debug s
+    case _      ⇒ (s: String) ⇒ scalaz.effect.IO.ioUnit
+  }
 }
 
 // vim: set ts=2 sw=2 et:
