@@ -5,7 +5,7 @@ import Keys._
 object BuildSettings {
   val sv = "2.10.3"
   val buildOrganization = "efa.nb"
-  val buildVersion = "0.3.0-SNAPSHOT"
+  val buildVersion = "0.3.1-SNAPSHOT"
   val buildScalaVersion = sv
   val netbeansRepo = "Netbeans" at "http://bits.netbeans.org/maven2/"
 
@@ -29,8 +29,8 @@ object BuildSettings {
 object Dependencies {
   import BuildSettings.sv
 
-  val utilV = "0.2.2-SNAPSHOT"
-  val direV = "0.1.0-SNAPSHOT"
+  val utilV = "0.2.3-SNAPSHOT"
+  val direV = "0.1.1-SNAPSHOT"
   val nbV = "RELEASE74"
   val scalazV = "7.0.4"
 

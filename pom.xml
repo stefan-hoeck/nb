@@ -10,7 +10,7 @@
 
   <groupId>efa.nb</groupId>
   <artifactId>efa-nb-root</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
   <packaging>pom</packaging>
 
   <name>nb root</name>
@@ -52,10 +52,10 @@
     <scalaz.version>7.0.4</scalaz.version>
     <shapeless.version>1.2.3</shapeless.version>
     <scalacheck.version>1.10.0</scalacheck.version>
-    <util.version>0.2.2-SNAPSHOT</util.version>
-    <dire.version>0.1.0-SNAPSHOT</dire.version>
-    <nb.version>0.3.0-SNAPSHOT</nb.version>
-    <localDe.version>0.3.0-SNAPSHOT</localDe.version>
+    <util.version>0.2.3-SNAPSHOT</util.version>
+    <dire.version>0.1.1-SNAPSHOT</dire.version>
+    <nb.version>0.3.1-SNAPSHOT</nb.version>
+    <localDe.version>0.3.1-SNAPSHOT</localDe.version>
   </properties>
 </project>
 <!-- vim: set ts=2 sw=2 et: -->
