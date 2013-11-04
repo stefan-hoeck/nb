@@ -52,10 +52,10 @@
     <scalaz.version>7.0.4</scalaz.version>
     <shapeless.version>1.2.3</shapeless.version>
     <scalacheck.version>1.10.0</scalacheck.version>
-    <util.version>0.2.2-SNAPSHOT</util.version>
-    <dire.version>0.1.0-SNAPSHOT</dire.version>
-    <nb.version>0.3.0-SNAPSHOT</nb.version>
-    <localDe.version>0.3.0-SNAPSHOT</localDe.version>
+    <util.version>0.2.2</util.version>
+    <dire.version>0.1.0</dire.version>
+    <nb.version>0.3.0</nb.version>
+    <localDe.version>0.3.0</localDe.version>
   </properties>
 </project>
 <!-- vim: set ts=2 sw=2 et: -->

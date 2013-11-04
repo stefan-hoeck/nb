@@ -10,7 +10,7 @@
   <groupId>efa.nb</groupId>
   <artifactId>efaLocalDeW</artifactId>
   <packaging>nbm</packaging>
-  <version>0.2.2-SNAPSHOT</version>
+  <version>0.2.2</version>
 
   <name>Efa LocalDe Wrapper</name>
 

@@ -5,7 +5,7 @@ import Keys._
 object BuildSettings {
   val sv = "2.10.3"
   val buildOrganization = "efa.nb"
-  val buildVersion = "0.3.0-SNAPSHOT"
+  val buildVersion = "0.3.0"
   val buildScalaVersion = sv
   val netbeansRepo = "Netbeans" at "http://bits.netbeans.org/maven2/"
 
@@ -29,8 +29,8 @@ object BuildSettings {
 object Dependencies {
   import BuildSettings.sv
 
-  val utilV = "0.2.2-SNAPSHOT"
-  val direV = "0.1.0-SNAPSHOT"
+  val utilV = "0.2.2"
+  val direV = "0.1.0"
   val nbV = "RELEASE74"
   val scalazV = "7.0.4"
 
@@ -39,14 +39,10 @@ object Dependencies {
   val dire = "dire"
   val scalaz = "org.scalaz"
 
-  val efa_core = util %% "efa-core" % utilV changing
-
-  val efa_io = util %% "efa-io" % utilV changing
-
-  val dire_core = dire %% "dire-core" % direV changing
-
-  val dire_swing = dire %% "dire-swing" % direV changing
- 
+  val efa_core = util %% "efa-core" % utilV
+  val efa_io = util %% "efa-io" % utilV
+  val dire_core = dire %% "dire-core" % direV
+  val dire_swing = dire %% "dire-swing" % direV
   val nbAnnotations = nb % "org-netbeans-api-annotations-common" % nbV
   val nbUtil = nb % "org-openide-util" % nbV
   val nbLookup = nb % "org-openide-util-lookup" % nbV
