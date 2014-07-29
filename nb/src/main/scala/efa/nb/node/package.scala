@@ -12,7 +12,7 @@ package object node {
 
   type Editor = Option[IO[Unit]]
 
-  type NtInfo = Pair[String,IO[Unit]]
+  type NtInfo = (String,IO[Unit])
 
   type Paster = (PasteType, org.openide.nodes.Node) ⇒ IO[Unit]
 

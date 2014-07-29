@@ -18,8 +18,11 @@ trait StNodeFunctions extends NbNodeFunctions with NbChildrenFunctions {
     o map (_ map st)
   }
 
-  def valFromInput[A,B] (o: ValOut[A,B])(v: A ⇒ EndoVal[B])
-    : ValOut[A,B] = o withIn ((a,vb) ⇒ vb flatMap (v(a) run _ validation))
+  def valFromInput[A,B] (o: ValOut[A,B])(v: A ⇒ EndoVal[B]): ValOut[A,B] = {
+    import scalaz.Validation.FlatMap._
+
+    o withIn ((a,vb) ⇒ vb flatMap (v(a) run _ validation))
+  }
 
 }
 

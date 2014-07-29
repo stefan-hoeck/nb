@@ -1,6 +1,6 @@
 package efa.nb.controller
 
-import dire._, SF.{id, sfIO, const, loop}
+import dire._, SF.{id, const, loop}
 import dire.swing.UndoEdit
 import efa.core.{ValRes, ValSt}
 import efa.io.LoggerIO

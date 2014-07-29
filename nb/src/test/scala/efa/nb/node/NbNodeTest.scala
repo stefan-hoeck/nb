@@ -2,7 +2,7 @@ package efa.nb.node
 
 import dire._, SF.once
 import efa.core.{Validators, ValRes}
-import efa.core.syntax.lookup._
+import efa.core.syntax.LookupOps
 import org.openide.cookies.EditCookie
 import org.scalacheck._, Prop._
 import scalaz._, Scalaz._, effect.IO
@@ -20,11 +20,11 @@ object NbNodeTest
   }
 
   property("name") = forAll { s: String ⇒
-    outTest(s, NbNode.name[String](identity), _.getDisplayName, s)
+    outTest(s, NbNode.name[String,Any](identity), _.getDisplayName, s)
   }
 
   property("desc") = Prop.forAll { s: String ⇒
-    outTest(s, desc[String](identity), _.getShortDescription, s)
+    outTest(s, desc[String,Any](identity), _.getShortDescription, s)
   }
 
   case class Cc (s: String)
@@ -36,15 +36,15 @@ object NbNodeTest
   implicit val CcArbitrary: Arbitrary[Cc] = Arbitrary(ccGen)
 
   property("cookie") = forAll { cc: Cc ⇒
-    outTestIO(cc, cookie[Cc], _.getLookup.all[Cc], List(cc))
+    outTestIO(cc, cookie[Cc,Any], _.getLookup.all[Cc], List(cc))
   }
 
   property("cookies") = forAll(Gen listOf ccGen map (_.distinct)) { cc ⇒
-    outTestIO(cc, cookies[Cc], _.getLookup.all[Cc], cc)
+    outTestIO(cc, cookies[Cc,Any], _.getLookup.all[Cc], cc)
   }
 
   property("cookieOption") = forAll { cc: Option[Cc] ⇒
-    outTestIO(cc, cookieOption[Cc], _.getLookup.all[Cc], cc.toList)
+    outTestIO(cc, cookieOption[Cc,Any], _.getLookup.all[Cc], cc.toList)
   }
 
   val nameVal = Validators maxStringLength 20

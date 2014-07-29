@@ -19,7 +19,7 @@ object NbChildrenTest
     Gen listOf strG map (_.zipWithIndex map toChild)
   implicit val ChildrenArbitrary = Arbitrary (childrenGen)
 
-  lazy val nameOut = NbNode.name[Child](_.name)
+  lazy val nameOut = NbNode.name[Child,Any](_.name)
   lazy val listFac = leavesF(nameOut)(identity[List[Child]])
   lazy val seqOut = children(listFac)
 
@@ -32,7 +32,7 @@ object NbChildrenTest
     val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
 
     val res = for {
-      n    ← NbNode()
+      n    ← NbNode.apply()
       _    = simulate(List(cs), false)(testSF(seqOut, n))
       ca   = n.getChildren.getNodes
       aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
@@ -75,13 +75,9 @@ object NbChildrenTest
   type NPOut[A] = NodeOut[A,ValSt[Parent]]
 
   val childOut: NPOut[FullChild] =
-    (NbNode.destroyP: NPOut[FullChild]) ⊹ 
-    NbNode.editP ⊹ 
-    NbNode.named
+    (NbNode.destroyP: NPOut[FullChild]) ⊹ NbNode.editP
 
-  val parentOut: NPOut[ParentPath] = 
-    children(parentF(childOut)) ⊹
-    NbNode.named
+  val parentOut: NPOut[ParentPath] = children(parentF(childOut))
   
   private def displayNames(n: NbNode): List[String] =
     n.getChildren.getNodes(true).toList map (_.getDisplayName)

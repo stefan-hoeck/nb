@@ -50,7 +50,7 @@ object StateTransTest extends Properties("StateTrans") {
       List("boo", "blub", "blib", "blab")
   }
 
-  type ISt[+A] = State[Int,A]
+  type ISt[A] = State[Int,A]
 
   //Creates a list of distinct values
   def dist(is: Int*): List[Int] = {

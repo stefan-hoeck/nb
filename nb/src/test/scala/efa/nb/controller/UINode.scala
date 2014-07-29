@@ -13,7 +13,7 @@ object UINode extends dire.util.TestFunctions {
     simulate(es.toList, true)(sf)
 
   val out: NodeOut[String,String] = 
-    (NbNode.rename: NodeOut[String,String]) ⊹ NbNode.name(identity)
+    (NbNode.rename[String]: NodeOut[String,String]) ⊹ NbNode.name(identity)
 
   sealed trait Event
   case class Rename(s: String) extends Event

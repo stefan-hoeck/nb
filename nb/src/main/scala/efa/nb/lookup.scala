@@ -1,10 +1,11 @@
 package efa.nb
 
 import dire.{Out, DataSource, SIn, SF}
-import efa.core.syntax.lookup.{LookupOps ⇒ LOps}
+import efa.core.syntax.{LookupOps ⇒ LOps}
 import org.openide.util.{Lookup, LookupListener, LookupEvent}
 import org.openide.util.lookup.ProxyLookup
 import scalaz.effect.IO
+import scalaz.syntax.monad._
 
 object lookup {
   implicit class LookupOps(val l: Lookup) extends AnyVal {
@@ -31,7 +32,7 @@ object lookup {
     new LookupListener {
       import scala.collection.JavaConversions._
       def resultChanged(e: LookupEvent) {
-        IO(r.allInstances.toList: List[A]) flatMap out unsafePerformIO
+        IO(r.allInstances.toList: List[A]) flatMap (as ⇒ out(as)) unsafePerformIO
       }
     }
   }

@@ -56,7 +56,7 @@ object UI extends dire.util.TestFunctions {
            } yield ()
 
            (id[Event] syncTo onE) >>
-           completeIsolated(uiSF.sf, undoOut)(IO(0)).syncTo(onLast)
+           completeIsolated(uiSF.sf[Int], undoOut)(IO(0)).syncTo(onLast)
          }
   } yield sf
 

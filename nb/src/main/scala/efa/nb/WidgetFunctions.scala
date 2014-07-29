@@ -18,8 +18,11 @@ trait WidgetFunctions
     readIn(in, v)
 
   def getSet[A,B,C](get: A ⇒ C)(set: (A,C) ⇒ ValSt[B], in: SfV[C,C])
-    : VStSF[A,B] =
+    : VStSF[A,B] = {
+    import scalaz.Validation.FlatMap._
+
     SF.id[A].upon(in ∙ get){ (a,vi) ⇒ vi flatMap (set(a,_)) }
+  }
 
   def intIn(in: SIn[String], v: EndoVal[Int] = dummy[Int]): VSIn[Int] =
     readIn(in, v)
@@ -38,7 +41,7 @@ trait WidgetFunctions
 
   def mapSt[A,B](l: B @> A): VStSF[ValSt[A],B] = {
     def nextSt(s: State[A,Unit]): State[B,Unit] =
-      init[B] >>= (b ⇒ l := s.exec(l get b)) void
+      init[B] >>= (b ⇒ l := s.exec(l get b) void)
 
     SF.id map { _ map nextSt }
   }

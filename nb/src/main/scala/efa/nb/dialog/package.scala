@@ -7,7 +7,7 @@ import java.io.File
 import scalaz._, Scalaz._, effect.IO
 
 package object dialog {
-  type DEInfo[+A] = scalaz.effect.IO[(Elem, VSIn[A])]
+  type DEInfo[A] = scalaz.effect.IO[(Elem, VSIn[A])]
 
   def saveFile(
     desc: String,

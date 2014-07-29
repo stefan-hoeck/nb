@@ -3,7 +3,7 @@ package efa.nb.node
 import dire._, dire.swing.swingOut
 import scalaz._, Scalaz._, effect.IO
 
-case class NodeOut[-A,+B](run: (Out[B], NbNode) ⇒ Out[A]) {
+case class NodeOut[A,B](run: (Out[B], NbNode) ⇒ Out[A]) {
   def andThen[C](c: NodeOut[B,C]): NodeOut[A,C] = 
     NodeOut[A,C]((oc,n) ⇒ run(c run (oc, n), n))
 
@@ -34,13 +34,13 @@ case class NodeOut[-A,+B](run: (Out[B], NbNode) ⇒ Out[A]) {
    * Merges two node outs. The effects of this NodeOut will
    * happen before the effects of that.
    */
-  def merge[C<:A,D>:B] (that: ⇒ NodeOut[C,D]): NodeOut[C,D] = 
-    NodeOut((od,n) ⇒ (run(od,n): Out[C]) ⊹ that.run(od,n))
+  def merge(that: ⇒ NodeOut[A,B]): NodeOut[A,B] = 
+    NodeOut((od,n) ⇒ run(od,n) ⊹ that.run(od,n))
 
   def sf(n: NbNode): SF[A,B] = SF.connectSync(o ⇒ swingOut(run(o,n)))
 
-  def sfSim(n: NbNode, o: Out[Any]): SF[A,B] =
-    this merge NodeOut[Any,Nothing]((_, _) ⇒ o) sf n
+  def sfSim(n: NbNode, o: Out[A]): SF[A,B] =
+    this merge NodeOut[A,B]((_, _) ⇒ o) sf n
 
   def withIn[C<:A,D](f: (C,B) ⇒ D): NodeOut[C,D] =
     NodeOut[C,D]((od, n) ⇒ c ⇒ {
@@ -76,10 +76,10 @@ trait NodeOutInstances {
 trait NodeOutFunctions {
   def point[A]: NodeOut[A,A] = NodeOut[A,A]((oa,_) ⇒ oa)
 
-  def outOnly[A](f: NbNode ⇒ Out[A]): NodeOut[A,Nothing] =
+  def outOnly[A,B](f: NbNode ⇒ Out[A]): NodeOut[A,B] =
     NodeOut((_,n) ⇒ f(n))
 
-  def outImpure[A](f: (NbNode, A) ⇒ Unit): NodeOut[A,Nothing] =
+  def outImpure[A,B](f: (NbNode, A) ⇒ Unit): NodeOut[A,B] =
     outOnly(n ⇒ a ⇒ IO(f(n,a)))
 }
 

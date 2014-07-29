@@ -1,6 +1,7 @@
 package efa.nb.node
 
-import efa.core.Efa._
+import efa.core.syntax.StringOps
+import efa.core.std.anyVal._
 import org.openide.filesystems.FileObject
 import scalaz._, Scalaz._, effect.IO
 

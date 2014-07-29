@@ -20,7 +20,9 @@ object PureLookupTest
 
     runUntil(SF io (PureLookup() map sf))(_ >= 10)
 
-    (ccs.size ≟ 10) && (ccs.last.size ≟ 10)
+    val string = ccs.toList mkString "\n"
+    (ccs.size ≟ 10 :| "ccs size") &&
+    (ccs.last.size ≟ 10 :| s"Last size: $string")
   }
 }
 

@@ -161,7 +161,7 @@ object OutlineNb {
   implicit val AsElem: AsSingleElem[OutlineNb] = Elem vhFill { _.peer }
 
   implicit val SelectedColumnsSource: DataSource[OutlineNb,List[String]] =
-    DataSource.signalSrcInpure((_: OutlineNb).selNames){
+    DataSource.signalSrcImpure((_: OutlineNb).selNames){
       op ⇒ out ⇒
         val li = listener(op, out)
         op.outline.setColumnSelectionAllowed(true)

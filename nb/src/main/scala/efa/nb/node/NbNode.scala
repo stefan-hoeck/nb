@@ -32,33 +32,33 @@ object NbNode extends NbNodeFunctions {
 trait NbNodeFunctions {
   import NodeOut.{outOnly, outImpure}
 
-  val contextRoots: NodeOut[List[String],Nothing] = outOnly(_.contextRoots)
+  def contextRoots[A]: NodeOut[List[String],A] = outOnly(_.contextRoots)
 
-  def contextRootsA[A] (ss: List[String]): NodeOut[A,Nothing] =
+  def contextRootsA[A,B] (ss: List[String]): NodeOut[A,B] =
     contextRoots ∙ (_ ⇒ ss)
 
-  def cookie[A:Manifest]: NodeOut[A,Nothing] = cookies[A] ∙ (List(_))
+  def cookie[A:Manifest,B]: NodeOut[A,B] = cookies ∙ (List(_))
 
-  def cookies[A:Manifest]: NodeOut[List[A],Nothing] =
+  def cookies[A:Manifest,B]: NodeOut[List[A],B] =
     outOnly(_.updateCookies[A])
 
-  def cookieOption[A:Manifest]: NodeOut[Option[A],Nothing] =
-    cookies[A] ∙ (_.toList)
+  def cookieOption[A:Manifest,B]: NodeOut[Option[A],B] =
+    cookies ∙ (_.toList)
 
-  def desc[A] (desc: A ⇒ String): NodeOut[A,Nothing] =
+  def desc[A,B](desc: A ⇒ String): NodeOut[A,B] =
     outImpure((n,a) ⇒ n.setShortDescription(desc(a)))
 
-  def described[A:Described]: NodeOut[A,Nothing] =
+  def described[A:Described,B]: NodeOut[A,B] =
     desc (Described[A].shortDesc)
 
   def destroy[A]: NodeOut[A,A] = destroyOption ∙ (_.some)
 
   def destroyEs[A,B] (f: A ⇒ State[B,Unit]): NodeOut[A,ValSt[B]] =
-    destroy[A] map (f(_).success)
+    destroy map (f(_).success)
 
   def destroyP[F[_],P,C,Path <: HList](implicit p: ParentL[F,P,C,Path])
     : NodeOut[C :: Path,ValSt[P]] =
-    destroy[C :: Path] map p.deleteV
+    destroy map p.deleteV
 
   def destroyOption[A]: NodeOut[Option[A],A] =
     NodeOut((outA, n) ⇒ oa ⇒ n setDestroyer oa.map(outA))
@@ -69,39 +69,39 @@ trait NbNodeFunctions {
     NodeOut((outA, n) ⇒ oa ⇒ n setEditor oa.map(outA))
 
   def editE[A,B](implicit D: Editable[A,B]): NodeOut[A,B] =
-    edit[A] collectIO D.edit
+    edit collectIO D.edit
 
   def editS[A,B,C] (f: B ⇒ State[C,Unit])
     (implicit D: Editable[A,B]): NodeOut[A,ValSt[C]] =
-    editE[A,B] map (f(_).success)
+    editE map (f(_).success)
 
   def editP[F[_],P,C:Equal,Path <: HList]
     (implicit D: Editable[C :: Path, C],
       p: ParentL[F,P,C,Path]): NodeOut[C :: Path,ValSt[P]] =
-    editE[C :: Path,C] withIn p.updateV
+    editE withIn p.updateV
 
-  val iconBase: NodeOut[String,Nothing] =
+  def iconBase[B]: NodeOut[String,B] =
     outImpure(_ setIconBaseWithExtension _)
 
-  def iconBaseA[A] (s: String): NodeOut[A,Nothing] = iconBase ∙ (_ ⇒ s)
+  def iconBaseA[A,B] (s: String): NodeOut[A,B] = iconBase ∙ (_ ⇒ s)
 
-  def iconImage[A] (f: A ⇒ IconImageF): NodeOut[A,Nothing] = 
+  def iconImage[A,B] (f: A ⇒ IconImageF): NodeOut[A,B] = 
     NodeOut((_,n) ⇒ a ⇒ n setIconImage Some(f(a)))
 
-  def preferredAction[A](f: A ⇒ Action): NodeOut[A,Nothing] =
+  def preferredAction[A,B](f: A ⇒ Action): NodeOut[A,B] =
     NodeOut((_,n) ⇒ a ⇒ n setPreferredAction Some(f(a)))
 
-  def preferredActionA[A](a: Action): NodeOut[A,Nothing] =
+  def preferredActionA[A,B](a: Action): NodeOut[A,B] =
     preferredAction(_ ⇒ a)
     
-  def name[A] (f: A ⇒ String): NodeOut[A, Nothing] =
+  def name[A,B](f: A ⇒ String): NodeOut[A,B] =
     outImpure((n,a) ⇒ n.setDisplayName(f(a)))
 
-  def named[A:Named]: NodeOut[A, Nothing] = name[A](Named[A].name)
+  def named[A:Named,B]: NodeOut[A,B] = name[A,B](Named[A].name)
 
-  def nameA[A] (s: String): NodeOut[A, Nothing] = name(_ ⇒ s)
+  def nameA[A,B](s: String): NodeOut[A,B] = name(_ ⇒ s)
 
-  val rename: NodeOut[Any,String] = NodeOut((o, n) ⇒ _ ⇒ n onRename o)
+  def rename[A]: NodeOut[A,String] = NodeOut((o, n) ⇒ _ ⇒ n onRename o)
 
   lazy val renameD: NodeOut[EndoVal[String],DisRes[String]] =
     rename withIn (_ run _)
@@ -181,40 +181,37 @@ trait NbNodeFunctions {
    * add this NodeOut before all addNt kind of NodeOuts, so the
    * list of NewTypes will be cleared before new ones are added.
    */
-  lazy val clearNt: NodeOut[Any,Nothing] =
+  def clearNt[A,B]: NodeOut[A,B] =
     NodeOut((_, n) ⇒ _ ⇒ n setNewTypes Nil)
 
-  def booleanW (n: String): NodeOut[Boolean,Nothing] =
-    writeProp[Boolean,Boolean](n, identity, Some(_ ⇒ new BooleanEditor))
+  def booleanW[B](n: String): NodeOut[Boolean,B] =
+    writeProp(n, identity, Some(_ ⇒ new BooleanEditor))
 
-  def intW (n: String): NodeOut[Int,Nothing] =
-    textW[Int,Int](n, identity, al = HAlign.Trailing)
+  def intW[B](n: String): NodeOut[Int,B] =
+    textW(n, identity, al = HAlign.Trailing)
 
-  def longW (n: String): NodeOut[Long,Nothing] =
-    textW[Long,Long](n, identity, al = HAlign.Trailing)
+  def longW[B](n: String): NodeOut[Long,B] =
+    textW(n, identity, al = HAlign.Trailing)
 
-  def doubleW (n: String, format: Double ⇒ String)
-  : NodeOut[Double,Nothing] = textW[Double,Double](
-    n, identity, toString = format, al = HAlign.Trailing
-  )
+  def doubleW[B](n: String, format: Double ⇒ String): NodeOut[Double,B] =
+    textW(n, identity, toString = format, al = HAlign.Trailing)
 
-  def showW[A:Show](n: String): NodeOut[A,Nothing] =
+  def showW[A:Show,B](n: String): NodeOut[A,B] =
     stringW(n) ∙ (_.shows)
 
-  def showWTrailing[A:Show](n: String): NodeOut[A,Nothing] =
-    textW[A,String](n, _.shows, _.shows, al = HAlign.Trailing)
+  def showWTrailing[A:Show,B](n: String): NodeOut[A,B] =
+    textW(n, _.shows, _.shows, al = HAlign.Trailing)
 
-  def stringW (n: String): NodeOut[String,Nothing] =
-    textW[String,String](n, identity)
+  def stringW[B](n: String): NodeOut[String,B] = textW(n, identity)
 
-  def textW[A,B:Manifest](
+  def textW[A,B:Manifest,C](
     name: String,
     toB: A ⇒ B,
     toString: A ⇒ String = (a: A) ⇒ a.toString,
     desc: A ⇒ Option[String] = (a: A) ⇒ None,
     al: HAlign = HAlign.Leading
-  ): NodeOut[A,Nothing] =
-    writeProp[A,B](name, toB, TextEditor.read(al, toString, desc))
+  ): NodeOut[A,C] =
+    writeProp[A,B,C](name, toB, TextEditor.read(al, toString, desc))
 
   def booleanRw (n: String): NodeOut[Boolean,ValRes[Boolean]] =
     rwProp[Boolean,Boolean](
@@ -274,12 +271,12 @@ trait NbNodeFunctions {
     NodeOut ((o, n) ⇒ a ⇒ RwProp[A,B](name, a, toB,
       validator, editor, o) >>= n.setPut)
 
-  def writeProp[A,B:Manifest](
+  def writeProp[A,B:Manifest,C](
     name: String,
     toB: A ⇒ B,
     editor: Option[A ⇒ PropertyEditor]
-  ): NodeOut[A,Nothing] =
-    NodeOut (
+  ): NodeOut[A,C] =
+    NodeOut(
     (_, n) ⇒ a ⇒ RProp[A,B](name, a, toB, editor) >>= n.setPut
   )
 

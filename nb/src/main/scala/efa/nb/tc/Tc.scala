@@ -4,6 +4,7 @@ import org.openide.explorer.ExplorerManager
 import org.openide.windows.TopComponent
 import java.awt.BorderLayout
 import scala.collection.mutable.{ArrayBuffer, SynchronizedBuffer}
+import scala.collection.JavaConversions._
 import scalaz._, Scalaz._, effect.IO
 
 abstract class Tc[A](implicit A: AsTc[A])
@@ -53,14 +54,14 @@ abstract class Tc[A](implicit A: AsTc[A])
 }
 
 object Tc {
-  private[this] val reg =
-    new ArrayBuffer[Tc[_]] with SynchronizedBuffer[Tc[_]]
+  private[this] lazy val reg =
+    new java.util.concurrent.ConcurrentLinkedQueue[Tc[_]]
 
   private[tc] def registry: IO[List[Tc[_]]] = IO(reg.toList)
 
-  private def add(tc: Tc[_]) = IO(reg += tc)
+  private def add(tc: Tc[_]) = IO(reg.add(tc))
 
-  private def remove(tc: Tc[_]) = IO(reg -= tc)
+  private def remove(tc: Tc[_]) = IO(reg.remove(tc))
 }
 
 // vim: set ts=2 sw=2 et:

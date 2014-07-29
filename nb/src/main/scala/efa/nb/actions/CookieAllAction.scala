@@ -1,6 +1,6 @@
 package efa.nb.actions
 
-import efa.core.Efa._
+import efa.core.syntax.LookupOps
 import org.openide.util.HelpCtx
 import org.openide.util.actions.CookieAction
 import org.openide.nodes.Node

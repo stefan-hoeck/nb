@@ -2,7 +2,7 @@ package efa.nb.node
 
 import scalaz.effect.IO
 
-trait Editable[-A,+B] {
+trait Editable[A,B] {
   def apply(a: A, isNew: Boolean): IO[Option[B]]
 
   def name(a: A): String

@@ -63,7 +63,8 @@ abstract class PureNode(c: Children, l: Lookup)
   override final def getDropType (t: Transferable, a: Int, i: Int) = new JPasteType {
     override def paste(): Transferable = {
       def infoO = PasteType.values foldMap (_ info t)
-      def io = infoO map (i ⇒ pasters foldMap (_ tupled i)) orZero
+      def io: IO[Unit] =
+        Tag.unwrap(infoO map (i ⇒ pasters foldMap (_ tupled i))).orZero
 
       io.unsafePerformIO
       null

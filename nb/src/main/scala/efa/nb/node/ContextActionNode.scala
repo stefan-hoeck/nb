@@ -1,6 +1,6 @@
 package efa.nb.node
 
-import efa.core.Efa._
+import efa.core.syntax.LookupOps
 import dire.Out
 import javax.swing.{Action, JSeparator}
 import org.openide.util.lookup.Lookups

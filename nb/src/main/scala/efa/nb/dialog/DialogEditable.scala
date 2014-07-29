@@ -9,7 +9,7 @@ import org.openide.{DialogDisplayer, DialogDescriptor, NotifyDescriptor}
 import scalaz._, Scalaz._, effect.IO
 
 /** Type class used to edit objects in a popup dialog */
-trait DialogEditable[-A,+B] extends Editable[A,B] {
+trait DialogEditable[A,B] extends Editable[A,B] {
   import DialogEditable._
 
   /** Creates a new component for editing
