@@ -1,7 +1,7 @@
 package efa.nb
 
 import dire.{Out, DataSource, SIn, SF}
-import efa.core.syntax.LookupOps
+import efa.core.syntax.{lookup ⇒ lkp}
 import org.openide.util.{Lookup, LookupListener, LookupEvent}
 import org.openide.util.lookup.{InstanceContent, AbstractLookup}
 import scala.reflect.runtime.universe.TypeTag

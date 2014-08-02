@@ -2,7 +2,7 @@ package efa.nb.node
 
 import dire._, SF.once
 import efa.core.{Validators, ValRes}
-import efa.core.syntax.LookupOps
+import efa.core.syntax.lookup
 import org.openide.cookies.EditCookie
 import org.scalacheck._, Prop._
 import scalaz._, Scalaz._, effect.IO

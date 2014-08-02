@@ -1,7 +1,7 @@
 package efa.nb
 
 import dire.{Out, DataSource, SIn, SF}
-import efa.core.syntax.{LookupOps ⇒ LOps}
+import efa.core.syntax.{lookup ⇒ LOps}
 import org.openide.util.{Lookup, LookupListener, LookupEvent}
 import org.openide.util.lookup.ProxyLookup
 import scalaz.effect.IO
