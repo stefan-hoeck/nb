@@ -4,7 +4,7 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
   </parent>
 
   <groupId>efa.nb</groupId>
@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>efa</groupId>
-      <artifactId>efa-core_2.10</artifactId>
+      <artifactId>efa-core_2.11</artifactId>
       <version>${util.version}</version>
       <exclusions>
         <exclusion>
@@ -25,36 +25,44 @@
           <artifactId>scala-library</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.scalaz</groupId>
-          <artifactId>scalaz-core_2.10</artifactId>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-reflect</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scala-lang.modules</groupId>
+          <artifactId>scala-xml_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
-          <artifactId>scalaz-effect_2.10</artifactId>
+          <artifactId>scalaz-core_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
-          <artifactId>scalaz-scalacheck-binding_2.10</artifactId>
+          <artifactId>scalaz-effect_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
-          <artifactId>scalaz-typelevel_2.10</artifactId>
+          <artifactId>scalaz-scalacheck-binding_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
-          <artifactId>scalaz-xml_2.10</artifactId>
+          <artifactId>scalaz-typelevel_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalaz</groupId>
-          <artifactId>scalaz-concurrent_2.10</artifactId>
+          <artifactId>scalaz-xml_2.11</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.scalaz</groupId>
+          <artifactId>scalaz-concurrent_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scalacheck</groupId>
-          <artifactId>scalacheck_2.10</artifactId>
+          <artifactId>scalacheck_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>com.chuusai</groupId>
-          <artifactId>shapeless_2.10</artifactId>
+          <artifactId>shapeless_2.11</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.netbeans.api</groupId>
@@ -70,6 +78,16 @@
       <groupId>efa.nb</groupId>
       <artifactId>scalaW</artifactId>
       <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaReflectW</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>efa.nb</groupId>
+      <artifactId>scalaXmlW</artifactId>
+      <version>${scalaXml.version}</version>
     </dependency>
     <dependency>
       <groupId>efa.nb</groupId>

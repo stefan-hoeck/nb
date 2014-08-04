@@ -5,12 +5,12 @@
   <parent>
     <artifactId>nb</artifactId>
     <groupId>efa.mvn</groupId>
-    <version>7.4.0</version>
+    <version>8.0.0</version>
   </parent>
 
   <groupId>efa.nb</groupId>
   <artifactId>efa-nb-root</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <packaging>pom</packaging>
 
   <name>nb root</name>
@@ -31,31 +31,36 @@
 
   <modules>
     <module>akkaW</module>
+    <module>direSwingW</module>
+    <module>direW</module>
     <module>efaCoreW</module>
     <module>efaIoW</module>
     <module>efaLocalDeW</module>
     <module>localDe</module>
     <module>nb</module>
-    <module>direSwingW</module>
-    <module>direW</module>
     <module>scalaCheckW</module>
     <module>scalaReflectW</module>
     <module>scalaSwingW</module>
     <module>scalaW</module>
+    <module>scalaParserW</module>
+    <module>scalaXmlW</module>
     <module>scalazW</module>
     <module>shapelessW</module>
   </modules>
 
   <properties>
-    <akka.version>2.1.0</akka.version>
-    <scala.version>2.10.3</scala.version>
-    <scalaz.version>7.0.4</scalaz.version>
-    <shapeless.version>1.2.3</shapeless.version>
-    <scalacheck.version>1.10.0</scalacheck.version>
+    <akka.version>2.3.2</akka.version>
+    <dire.version>0.2.0-SNAPSHOT</dire.version>
+    <localDe.version>0.3.2-SNAPSHOT</localDe.version>
+    <nb.version>0.3.2-SNAPSHOT</nb.version>
+    <scala.version>2.11.2</scala.version>
+    <scalaParser.version>1.0.2</scalaParser.version>
+    <scalaSwing.version>1.0.1</scalaSwing.version>
+    <scalaXml.version>1.0.2</scalaXml.version>
+    <scalacheck.version>1.11.4</scalacheck.version>
+    <scalaz.version>7.1.0</scalaz.version>
+    <shapeless.version>2.0.0</shapeless.version>
     <util.version>0.2.3-SNAPSHOT</util.version>
-    <dire.version>0.1.1-SNAPSHOT</dire.version>
-    <nb.version>0.3.1-SNAPSHOT</nb.version>
-    <localDe.version>0.3.1-SNAPSHOT</localDe.version>
   </properties>
 </project>
 <!-- vim: set ts=2 sw=2 et: -->

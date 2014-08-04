@@ -7,17 +7,17 @@
     <version>0.3.2</version>
   </parent>
   
-  <version>1.0.1</version>
-  <artifactId>scalaSwingW</artifactId>
+  <version>1.0.2</version>
+  <artifactId>scalaParserW</artifactId>
   <packaging>nbm</packaging>
 
-  <name>Scala Swing Wrapper</name>
+  <name>Scala Parser Combinators Wrapper</name>
 
   <dependencies>
     <dependency>
       <groupId>org.scala-lang.modules</groupId>
-      <artifactId>scala-swing_2.11</artifactId>
-      <version>${scalaSwing.version}</version>
+      <artifactId>scala-parser-combinators_2.11</artifactId>
+      <version>${scalaParser.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.scala-lang</groupId>
@@ -39,7 +39,7 @@
         <artifactId>nbm-maven-plugin</artifactId>
         <configuration>
           <publicPackages>
-            <publicPackage>scala.swing.*</publicPackage>
+            <publicPackage>scala.util.*</publicPackage>
           </publicPackages>
         </configuration>
       </plugin>

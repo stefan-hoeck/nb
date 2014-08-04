@@ -4,20 +4,20 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
   </parent>
 
   <groupId>efa.nb</groupId>
   <artifactId>shapelessW</artifactId>
   <packaging>nbm</packaging>
-  <version>1.2.3</version>
+  <version>2.0.0</version>
 
   <name>Shapeless Wrapper</name>
 
   <dependencies>
     <dependency>
       <groupId>com.chuusai</groupId>
-      <artifactId>shapeless_2.10</artifactId>
+      <artifactId>shapeless_2.11</artifactId>
       <version>${shapeless.version}</version>
       <exclusions>
         <exclusion>
