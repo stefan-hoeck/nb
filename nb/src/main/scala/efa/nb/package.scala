@@ -12,9 +12,9 @@ package object nb {
 
   type VStSF[A,B] = SF[A,ValSt[B]]
 
-  lazy val loc = Service.unique[NbLoc](NbLoc)
+  lazy val loc = Service.unique[NbLoc]
 
-  private[nb] lazy val pref = Service.unique[TcPreferences](TcPreferences)
+  private[nb] lazy val pref = Service.unique[TcPreferences]
 
   lazy val NbSystem = ReactiveSystem(reactiveLog).unsafePerformIO()
 

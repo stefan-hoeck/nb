@@ -8,6 +8,8 @@ import org.scalacheck._, Prop._
 import scalaz._, Scalaz._, effect.IO
 import scalacheck.ScalaCheckBinding._
 
+case class Cc (s: String)
+
 object NbNodeTest
   extends Properties("NbNode") 
   with dire.util.TestFunctions {
@@ -26,8 +28,6 @@ object NbNodeTest
   property("desc") = Prop.forAll { s: String ⇒
     outTest(s, desc[String,Any](identity), _.getShortDescription, s)
   }
-
-  case class Cc (s: String)
 
   val dummy = Cc("dummy")
   implicit val CcEqual: Equal[Cc] = Equal.equalA

@@ -37,12 +37,12 @@ trait NbNodeFunctions {
   def contextRootsA[A,B] (ss: List[String]): NodeOut[A,B] =
     contextRoots ∙ (_ ⇒ ss)
 
-  def cookie[A:Manifest,B]: NodeOut[A,B] = cookies ∙ (List(_))
+  def cookie[A:Unerased,B]: NodeOut[A,B] = cookies ∙ (List(_))
 
-  def cookies[A:Manifest,B]: NodeOut[List[A],B] =
+  def cookies[A:Unerased,B]: NodeOut[List[A],B] =
     outOnly(_.updateCookies[A])
 
-  def cookieOption[A:Manifest,B]: NodeOut[Option[A],B] =
+  def cookieOption[A:Unerased,B]: NodeOut[Option[A],B] =
     cookies ∙ (_.toList)
 
   def desc[A,B](desc: A ⇒ String): NodeOut[A,B] =
@@ -204,7 +204,7 @@ trait NbNodeFunctions {
 
   def stringW[B](n: String): NodeOut[String,B] = textW(n, identity)
 
-  def textW[A,B:Manifest,C](
+  def textW[A,B:Unerased,C](
     name: String,
     toB: A ⇒ B,
     toString: A ⇒ String = (a: A) ⇒ a.toString,
@@ -218,7 +218,7 @@ trait NbNodeFunctions {
       n, identity, Validators.dummy, Some((_,_) ⇒ new BooleanEditor)
     )
 
-  def comboRw[A:Manifest] (
+  def comboRw[A:Unerased] (
     as: List[A],
     n: String,
     al: HAlign = HAlign.Trailing
@@ -236,7 +236,7 @@ trait NbNodeFunctions {
     : NodeOut[String,ValRes[String]] =
    readRw[String](n, v, al = HAlign.Leading)
 
-  def readRw[A:Read:Manifest](
+  def readRw[A:Read:Unerased](
     name: String,
     validator: EndoVal[A],
     toString: A ⇒ String = (a: A) ⇒ a.toString,
@@ -246,7 +246,7 @@ trait NbNodeFunctions {
     name, Read[A].validator >=> validator, toString, desc, al
   )
 
-  def textRw[A:Manifest](
+  def textRw[A:Unerased](
     name: String,
     read: Validator[String,A],
     toString: A ⇒ String = (a: A) ⇒ a.toString,
@@ -262,7 +262,7 @@ trait NbNodeFunctions {
     rwProp[A,A](name, identity, Validators.dummy, Some(ed(_, _)))
   }
 
-  def rwProp[A,B:Manifest](
+  def rwProp[A,B:Unerased](
     name: String,
     toB: A ⇒ B,
     validator: EndoVal[B],
@@ -271,7 +271,7 @@ trait NbNodeFunctions {
     NodeOut ((o, n) ⇒ a ⇒ RwProp[A,B](name, a, toB,
       validator, editor, o) >>= n.setPut)
 
-  def writeProp[A,B:Manifest,C](
+  def writeProp[A,B:Unerased,C](
     name: String,
     toB: A ⇒ B,
     editor: Option[A ⇒ PropertyEditor]
@@ -287,8 +287,8 @@ trait NbNodeFunctions {
     a: A,
     toB: A ⇒ B,
     editor: Option[A ⇒ PropertyEditor]
-  )(implicit m: Manifest[B])
-   extends Node.Property[B] (m.runtimeClass.asInstanceOf[Class[B]]) {
+  )(implicit m: Unerased[B])
+   extends Node.Property[B](m.clazz) {
     override def canRead = true
     override def canWrite = false
     override def setValue (a: B) {}
@@ -298,7 +298,7 @@ trait NbNodeFunctions {
   }
 
   private object RProp {
-    def apply[A,B:Manifest] (
+    def apply[A,B:Unerased] (
       name: String,
       a: A,
       toB: A ⇒ B,
@@ -313,8 +313,8 @@ trait NbNodeFunctions {
     validator: EndoVal[B],
     editor: Option[(A, Out[ValRes[B]]) ⇒ PropertyEditor],
     out: Out[ValRes[B]]
-  )(implicit m: Manifest[B])
-   extends Node.Property[B](m.runtimeClass.asInstanceOf[Class[B]]) {
+  )(implicit m: Unerased[B])
+   extends Node.Property[B](m.clazz) {
     override def canRead = true
     override def canWrite = true
     override def getValue: B = toB (a)
@@ -328,7 +328,7 @@ trait NbNodeFunctions {
   }
 
   private object RwProp {
-    def apply[A,B:Manifest] (
+    def apply[A,B:Unerased] (
       name: String,
       a: A,
       toB: A ⇒ B,
@@ -347,7 +347,7 @@ final class NbNode private (
 
   // *** Cookies ***
   
-  def updateCookies[A:Manifest]: Out[List[A]] = lkp.set
+  def updateCookies[A:Unerased]: Out[List[A]] = lkp.set
 
   // *** Property Sheet ***
   private[this] lazy val set = Sheet.createPropertiesSet

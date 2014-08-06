@@ -1,5 +1,7 @@
 package efa.nb.spi
 
+import efa.core.Default
+
 trait NbLoc {
   def confirmOverwrite (p: String): String
 
@@ -25,6 +27,8 @@ trait NbLoc {
  * Default localization (English)
  */
 object NbLoc extends NbLoc {
+  implicit val defInst: Default[NbLoc] = Default.default(this)
+
   def confirmOverwrite (p: String): String =
     s"File $p already exists. Do you want to overwrite it?"
 

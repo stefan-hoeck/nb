@@ -1,6 +1,7 @@
 package efa.nb
 
 import dire.{Out, DataSource, SIn, SF}
+import efa.core.Unerased
 import efa.core.syntax.{lookup ⇒ lkp}
 import org.openide.util.{Lookup, LookupListener, LookupEvent}
 import org.openide.util.lookup.{InstanceContent, AbstractLookup}
@@ -20,29 +21,29 @@ class PureLookup private(ic: InstanceContent) {
 
   def add[A](a: A): IO[Unit] = this + a
 
-  def all[A:Manifest]: IO[List[A]] = l.all[A]
+  def all[A:Unerased]: IO[List[A]] = l.all[A]
 
-  def clear[A:Manifest]: IO[Unit] = all[A] >>= --
+  def clear[A:Unerased]: IO[Unit] = all[A] >>= --
 
-  def head[A:Manifest]: IO[Option[A]] = l.head[A]
+  def head[A:Unerased]: IO[Option[A]] = l.head[A]
 
-  def mod[A:Manifest](f: A ⇒ A): IO[Unit] =
+  def mod[A:Unerased](f: A ⇒ A): IO[Unit] =
     head[A] >>= (_ map (a ⇒ update(a, f(a))) orZero)
 
   def remove[A](a: A): IO[Unit] = this - a
 
-  def results[A:Manifest]: SIn[List[A]] = {
+  def results[A:Unerased]: SIn[List[A]] = {
     import lookup.LookupOps
 
     l.results[A]
   }
 
-  def resultsCached[A:Manifest:TypeTag]: SIn[List[A]] = 
+  def resultsCached[A:Unerased:TypeTag]: SIn[List[A]] = 
     SF.cached(results[A], this)
 
-  def set[A:Manifest](a: A): IO[Unit] = set (List(a))
+  def set[A:Unerased](a: A): IO[Unit] = set (List(a))
 
-  def set[A:Manifest](as: List[A]): IO[Unit] = clear >> ++(as)
+  def set[A:Unerased](as: List[A]): IO[Unit] = clear >> ++(as)
 
   def update[A](o: A, n: A): IO[Unit] = remove(o) >> add(n)
 

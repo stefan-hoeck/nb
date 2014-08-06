@@ -1,14 +1,15 @@
 package efa.nb.node
 
-import scalaz._, Scalaz._
+import efa.core.Unerased
 import java.awt.event.ActionListener
 import java.awt.{Component => JComp}
 import java.beans.PropertyEditor
 import javax.swing.{JComponent, KeyStroke}
 import org.openide.explorer.propertysheet.{InplaceEditor, PropertyModel,
   PropertyEnv}
+import scalaz._, Scalaz._
 
-abstract class ComponentInplaceEditor[T](implicit m: Manifest[T])
+abstract class ComponentInplaceEditor[T](implicit m: Unerased[T])
    extends InplaceEditor {  
   protected val comp: JComponent
   protected def get: T
@@ -23,9 +24,9 @@ abstract class ComponentInplaceEditor[T](implicit m: Manifest[T])
   override def getComponent: JComponent = comp
   override def clear() { editor = None; model = None }
   override def getValue = get.asInstanceOf[AnyRef]
-  override def setValue(o: AnyRef) { set(o.asInstanceOf[T]) }
+  override def setValue(o: AnyRef) { set(m.clazz cast o) }
   override def reset() {
-    editor flatMap (e ⇒ Option(e.getValue)) foreach { v ⇒ set(v.asInstanceOf[T]) }
+    editor flatMap (e ⇒ Option(e.getValue)) foreach { v ⇒ set(m.clazz cast v) }
   }
   override def getKeyStrokes = Array[KeyStroke]()
   override def getPropertyEditor = editor | null

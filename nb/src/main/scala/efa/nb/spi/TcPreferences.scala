@@ -1,5 +1,6 @@
 package efa.nb.spi
 
+import efa.core.Default
 import efa.io.LoggerIO
 import scalaz.effect.IO
 
@@ -8,6 +9,8 @@ trait TcPreferences {
 }
 
 object TcPreferences extends TcPreferences {
+  implicit val defInst: Default[TcPreferences] = Default.default(this)
+
   def tcLogger = IO(LoggerIO.consoleLogger)
 }
 

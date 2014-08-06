@@ -1,5 +1,6 @@
 package efa.nb.node
 
+import efa.core.Unerased
 import dire.swing.HAlign
 import java.awt.{Rectangle, Graphics}
 import java.beans.PropertyEditorSupport
@@ -8,7 +9,7 @@ import org.openide.explorer.propertysheet.{ExPropertyEditor, InplaceEditor,
    PropertyEnv}
 
 class ComboBoxEditor[T](values: List[T], al: HAlign)
-                       (implicit m: Manifest[T])
+                       (implicit m: Unerased[T])
    extends PropertyEditorSupport
    with ExPropertyEditor
    with InplaceEditor.Factory{
@@ -25,7 +26,7 @@ class ComboBoxEditor[T](values: List[T], al: HAlign)
   }
 }
 
-private [node] class ComboBoxInplace[T](values: List[T])(implicit m: Manifest[T]) 
+private [node] class ComboBoxInplace[T](values: List[T])(implicit m: Unerased[T]) 
     extends ComponentInplaceEditor[T] {
   import scala.collection.JavaConversions._
 
