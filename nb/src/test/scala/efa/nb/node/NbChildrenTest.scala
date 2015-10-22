@@ -1,7 +1,7 @@
 package efa.nb.node
 
 import dire._, SF.const
-import efa.core.{UniqueId, Efa, ValSt, ParentL, Name, Id}, Efa._
+import efa.core.{UniqueId, Efa, ValSt, ParentL}, Efa._
 import org.scalacheck._, Prop._
 import scalaz._, Scalaz._, effect.IO
 
@@ -11,7 +11,7 @@ object NbChildrenTest
   import NbChildren._
   import NbNodeTest.{outTestIO, outTest, testSF}
 
-  private val toChild = (p: (String,Int)) ⇒ Child(Id(p._2), Name(p._1))
+  private val toChild = (p: (String,Int)) ⇒ Child(p._2, p._1)
 
   //Generators
   val strG = Gen.identifier
@@ -24,21 +24,21 @@ object NbChildrenTest
   lazy val seqOut = children(listFac)
 
   property ("seqFactory") = forAll { cs: List[Child] ⇒ 
-    outTest(cs, seqOut, displayNames, cs map { _.name.v })
+    outTest(cs, seqOut, displayNames, cs map { _.name })
   }
 
   //Test that after resetting the nodes, all nodes are created afresh
   property ("seqFactory_reset") = Prop.forAll { cs: List[Child] ⇒ 
-    val rs = cs map (c ⇒ Child (c.id, Name(c.name.v.reverse)))
+    val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
 
     val res = for {
       n    ← NbNode.apply()
       _    = simulate(List(cs), false)(testSF(seqOut, n))
       ca   = n.getChildren.getNodes
-      aSet = (displayNames (n) ≟ cs.map (_.name.v)) :| "first set"
+      aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
       _    = simulate(List(rs), false)(testSF(seqOut, n))
       cb   = n.getChildren.getNodes
-      bSet = (displayNames (n) ≟ rs.map (_.name.v)) :| "second set"
+      bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
       ne   = (ca zip cb).toList ∀ {case (a,b) ⇒ a ne b} :| "equality"
     } yield aSet && bSet && ne
 
@@ -49,22 +49,22 @@ object NbChildrenTest
   lazy val uidOut = children(uidFac)
 
   property ("uidFactory") = Prop.forAll { cs: List[Child] ⇒ 
-    outTest(cs, uidOut, displayNames, cs map { _.name.v })
+    outTest(cs, uidOut, displayNames, cs map { _.name })
   }
 
   //Test that after resetting the nodes, the same nodes are used if
   //The id numbers stay the same
   property ("uidFactory_reset") = Prop.forAll { cs: List[Child] ⇒ 
-    val rs = cs map (c ⇒ Child (c.id, Name(c.name.v.reverse)))
+    val rs = cs map (c ⇒ Child (c.id, c.name.reverse))
 
     val res = for {
       n    ← NbNode()
       _    = simulate(List(cs), false)(testSF(uidOut, n))
       ca   = n.getChildren.getNodes
-      aSet = (displayNames (n) ≟ cs.map (_.name.v)) :| "first set"
+      aSet = (displayNames (n) ≟ cs.map (_.name)) :| "first set"
       _    = simulate(List(rs), false)(testSF(uidOut, n))
       cb   = n.getChildren.getNodes
-      bSet = (displayNames (n) ≟ rs.map (_.name.v)) :| "second set"
+      bSet = (displayNames (n) ≟ rs.map (_.name)) :| "second set"
       eq   = (ca zip cb).toList ∀ {case (a,b) ⇒ a eq b} :| "equality"
     } yield aSet && bSet && eq
 

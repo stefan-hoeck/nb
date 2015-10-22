@@ -49,7 +49,7 @@ trait NbNodeFunctions {
     outImpure((n,a) ⇒ n.setShortDescription(desc(a)))
 
   def described[A:Described,B]: NodeOut[A,B] =
-    desc(Described[A] shortDesc _ v)
+    desc(Described[A].shortDesc)
 
   def destroy[A]: NodeOut[A,A] = destroyOption ∙ (_.some)
 
@@ -97,7 +97,7 @@ trait NbNodeFunctions {
   def name[A,B](f: A ⇒ String): NodeOut[A,B] =
     outImpure((n,a) ⇒ n.setDisplayName(f(a)))
 
-  def named[A:Named,B]: NodeOut[A,B] = name[A,B](Named[A] name _ v)
+  def named[A:Named,B]: NodeOut[A,B] = name[A,B](Named[A].name)
 
   def nameA[A,B](s: String): NodeOut[A,B] = name(_ ⇒ s)
 
