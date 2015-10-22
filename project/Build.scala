@@ -37,22 +37,22 @@ object BuildSettings {
 object Dependencies {
   import BuildSettings.sv
 
-  val direV                = "0.2.0-SNAPSHOT"
+  val direV                = "0.2.0"
   val nbV                  = "RELEASE80"
   val scalacheckV          = "1.11.4"
   val scalazV              = "7.1.4"
   val shapelessV           = "2.2.5"
-  val utilV                = "0.2.4-SNAPSHOT"
+  val utilV                = "0.2.4"
 
   val dire                 = "dire"
   val nb                   = "org.netbeans.api"
   val scalaz               = "org.scalaz"
   val util                 = "efa"
 
-  val efa_core             = (util %% "efa-core" % utilV).changing
-  val efa_io               = (util %% "efa-io" % utilV).changing
-  val dire_core            = (dire %% "dire-core" % direV).changing
-  val dire_swing           = (dire %% "dire-swing" % direV).changing
+  val efa_core             = util %% "efa-core" % utilV
+  val efa_io               = util %% "efa-io" % utilV
+  val dire_core            = dire %% "dire-core" % direV
+  val dire_swing           = dire %% "dire-swing" % direV
  
   val nbActions            = nb % "org-openide-actions" % nbV
   val nbAnnotations        = nb % "org-netbeans-api-annotations-common" % nbV
