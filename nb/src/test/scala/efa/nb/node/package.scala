@@ -9,10 +9,8 @@ package object node {
   type ParentPath = Parent :: HNil
   type FullChild = Child :: ParentPath
 
-  implicit val FullChildShow: Show[FullChild] = Show shows { _.head.name }
-  implicit val FullChildUId: UniqueId[FullChild,Int] = UniqueId.get(_.head.id)
-  implicit val FullChildDE: DE[FullChild,Child] = 
-    DE.io1[FullChild,Child] { f ⇒ ??? }
+  implicit def namedInst: Named[FullChild] = implicitly
+  implicit val FullChildDE: DE[FullChild,Child] = DE.io1 { f ⇒ ??? }
 }
 
 // vim: set ts=2 sw=2 et:
