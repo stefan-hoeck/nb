@@ -4,13 +4,13 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
   </parent>
 
   <groupId>efa.nb</groupId>
   <artifactId>efaIoW</artifactId>
   <packaging>nbm</packaging>
-  <version>0.2.3-SNAPSHOT</version>
+  <version>0.2.4</version>
 
   <name>Efa IO Wrapper</name>
 

@@ -4,10 +4,10 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
   </parent>
   
-  <version>1.0.2</version>
+  <version>1.0.5</version>
   <artifactId>scalaXmlW</artifactId>
   <packaging>nbm</packaging>
 
