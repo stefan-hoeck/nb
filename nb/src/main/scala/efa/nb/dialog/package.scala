@@ -23,7 +23,7 @@ package object dialog {
     IOChooser.all(selected) saveConfirm confirm
 
   private def confirm(p: String): IO[Boolean] =
-    Confirmation msg efa.nb.loc.confirmOverwrite(p)
+    Confirmation msg efa.nb.loc.confirmOverwrite(p) map (_.toBool)
 }
 
 // vim: set ts=2 sw=2 et:
