@@ -107,7 +107,7 @@ trait NbChildrenFunctions {
     (get: C ⇒ F[A]): Factory[C,B] = (ob,c, _) ⇒ {
       def setter(a: A) = create(out, true)(ob, a)
 
-      get(c) traverse setter map { ss ⇒ (Map.empty, ss.toIndexedSeq) }
+      get(c) traverse setter map { ss ⇒ (Map.empty, ss.toVector) }
     }
 
   /** Displays a container of objects each in a `Node`.
@@ -234,7 +234,7 @@ trait NbChildrenFunctions {
       
       for {
         pairs ← abs traverse setterPair
-        ixsq  = pairs.toIndexedSeq
+        ixsq  = pairs.toVector
       } yield (ixsq.toMap, ixsq map (_._2))
     }
 

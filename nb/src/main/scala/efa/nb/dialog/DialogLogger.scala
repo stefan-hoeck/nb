@@ -14,7 +14,7 @@ object DialogLogger {
   }
 
   private def logNel (ss: NonEmptyList[String]) =
-    Error msg (ss.list mkString "\n")
+    Error msg (ss.list.toList mkString "\n")
 }
 
 // vim: set ts=2 sw=2 et:
