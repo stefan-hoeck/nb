@@ -10,7 +10,7 @@
 
   <groupId>efa.nb</groupId>
   <artifactId>efa-nb</artifactId>
-  <version>0.3.3</version>
+  <version>0.3.4</version>
   <packaging>nbm</packaging>
 
   <name>nb</name>

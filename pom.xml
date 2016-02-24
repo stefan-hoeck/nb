@@ -52,7 +52,7 @@
     <akka.version>2.3.14</akka.version>
     <dire.version>0.2.0</dire.version>
     <localDe.version>0.3.3</localDe.version>
-    <nb.version>0.3.3</nb.version>
+    <nb.version>0.3.4</nb.version>
     <scala.version>2.11.7</scala.version>
     <scalaParser.version>1.0.2</scalaParser.version>
     <scalaSwing.version>1.0.1</scalaSwing.version>
