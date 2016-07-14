@@ -30,6 +30,8 @@ abstract class Tc[A](implicit A: AsTc[A])
     cleanup.read.μ >>
     cleanup.write(IO.ioUnit)
 
+  final private[tc] def doPersist = A.persist(a)
+
   final override def componentOpened() { 
     if (uninitialized) {
       uninitialized = false
