@@ -10,7 +10,7 @@
   <groupId>efa.nb</groupId>
   <artifactId>scalazW</artifactId>
   <packaging>nbm</packaging>
-  <version>7.2.0</version>
+  <version>7.2.4</version>
 
   <name>Scalaz Wrapper</name>
 
@@ -110,29 +110,6 @@
     <dependency>
       <groupId>org.scalaz</groupId>
       <artifactId>scalaz-concurrent_2.11</artifactId>
-      <version>${scalaz.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.scala-lang</groupId>
-          <artifactId>scala-library</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.scalacheck</groupId>
-          <artifactId>scalacheck_2.11</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.scala-lang.modules</groupId>
-          <artifactId>scala-parser-combinators_2.11</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.scala-lang.modules</groupId>
-          <artifactId>scala-xml_2.11</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.scalaz</groupId>
-      <artifactId>scalaz-typelevel_2.11</artifactId>
       <version>${scalaz.version}</version>
       <exclusions>
         <exclusion>
