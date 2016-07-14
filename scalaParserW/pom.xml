@@ -4,7 +4,7 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6</version>
   </parent>
   
   <version>1.0.2</version>
