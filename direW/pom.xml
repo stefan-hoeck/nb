@@ -4,13 +4,13 @@
   <parent>
     <groupId>efa.nb</groupId>
     <artifactId>efa-nb-root</artifactId>
-    <version>0.3.6</version>
+    <version>0.4.0</version>
   </parent>
 
   <groupId>efa.nb</groupId>
   <artifactId>direW</artifactId>
   <packaging>nbm</packaging>
-  <version>0.2.2</version>
+  <version>0.3.0</version>
 
   <name>Dire Wrapper</name>
 
