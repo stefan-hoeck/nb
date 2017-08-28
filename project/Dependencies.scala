@@ -1,48 +1,14 @@
-import scala.language.postfixOps
 import sbt._
-import Keys._
-
-object BuildSettings {
-  val sv                = "2.11.8"
-  val buildOrganization = "efa.nb"
-  val buildVersion      = "0.4.0-SNAPSHOT"
-  val buildScalaVersion = sv
-  val netbeansRepo      = "Netbeans" at "http://bits.netbeans.org/maven2/"
-
-  val manifest          = SettingKey[File]("manifest", "Location of the Manifest.mf file")
-  val removeManifest    = TaskKey[Unit]("remove-manifest", "Removes manifest file")
- 
-  val buildSettings = Seq (
-    organization       := buildOrganization,
-    version            := buildVersion,
-    scalaVersion       := buildScalaVersion,
-    resolvers          += netbeansRepo,
-    publishTo          := Some(Resolver.file("file", 
-      new File(Path.userHome.absolutePath+"/.m2/repository"))),
-    manifest           <<= classDirectory in Compile apply (_ / "META-INF/MANIFEST.MF"),
-    removeManifest     <<= manifest map (f ⇒ f.delete),
-    fork := true,
-
-    scalacOptions      ++= Seq(
-      "-unchecked",
-      "-deprecation",
-      "-feature",
-      "-language:postfixOps",
-      "-language:implicitConversions",
-      "-language:higherKinds"
-    )
-  )
-} 
 
 object Dependencies {
-  import BuildSettings.sv
+  val sv                = "2.12.3"
 
-  val direV                = "0.3.0-SNAPSHOT"
+  val direV                = "0.3.0"
   val nbV                  = "RELEASE80"
-  val scalacheckV          = "1.12.5"
-  val scalazV              = "7.2.4"
-  val shapelessV           = "2.2.5"
-  val utilV                = "0.3.0-SNAPSHOT"
+  val scalacheckV          = "1.12.6"
+  val scalazV              = "7.2.15"
+  val shapelessV           = "2.3.2"
+  val utilV                = "0.3.0"
 
   val dire                 = "dire"
   val nb                   = "org.netbeans.api"
@@ -79,36 +45,6 @@ object Dependencies {
   val shapeless            = "com.chuusai" %% "shapeless" % shapelessV
 
   val deps                 = Seq(scalaz_core, scalaz_effect, shapeless, scalacheck)
-}
-
-object UtilBuild extends Build {
-  import Dependencies._
-  import BuildSettings._
-
-  def addDeps (ds: ModuleID*) =
-    BuildSettings.buildSettings ++ Seq(libraryDependencies ++= (deps ++ ds))
-
-  lazy val util = Project (
-    "efa-nb-root",
-    file("."),
-    settings = buildSettings
-  ) aggregate (nb, localDe)
-
-  lazy val nb = Project (
-    "efa-nb",
-    file("nb"),
-    settings = addDeps (
-      nbUtil, nbLookup, nbDialogs, nbNodes, nbExplorer, nbModules,
-      nbOptions, nbFilesystems, nbLoaders, dire_core,
-      dire_swing, efa_core, efa_io
-    )
-  )
-
-  lazy val localDe = Project (
-    "efa-nb-localDe",
-    file("localDe"),
-    settings = addDeps()
-  ) dependsOn(nb)
 }
 
 // vim: set ts=2 sw=2 nowrap et:

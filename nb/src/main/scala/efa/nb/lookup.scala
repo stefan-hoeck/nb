@@ -31,9 +31,9 @@ object lookup {
 
   private def looli[A](r: Lookup.Result[A], out: Out[List[A]]) = IO {
     new LookupListener {
-      import scala.collection.JavaConversions._
+      import scala.collection.JavaConverters._
       def resultChanged(e: LookupEvent) {
-        IO(r.allInstances.toList: List[A]) flatMap (as ⇒ out(as)) unsafePerformIO
+        IO(r.allInstances.asScala.toList: List[A]) flatMap (as ⇒ out(as)) unsafePerformIO
       }
     }
   }

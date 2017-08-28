@@ -4,7 +4,7 @@ import org.openide.explorer.ExplorerManager
 import org.openide.windows.TopComponent
 import java.awt.BorderLayout
 import scala.collection.mutable.{ArrayBuffer, SynchronizedBuffer}
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scalaz._, Scalaz._, effect.IO
 
 abstract class Tc[A](implicit A: AsTc[A])
@@ -59,7 +59,7 @@ object Tc {
   private[this] lazy val reg =
     new java.util.concurrent.ConcurrentLinkedQueue[Tc[_]]
 
-  private[tc] def registry: IO[List[Tc[_]]] = IO(reg.toList)
+  private[tc] def registry: IO[List[Tc[_]]] = IO(reg.asScala.toList)
 
   private def add(tc: Tc[_]) = IO(reg.add(tc))
 

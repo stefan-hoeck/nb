@@ -19,7 +19,7 @@ import org.openide.explorer.view.OutlineView
 import org.openide.nodes.Node
 import org.openide.util.Lookup
 import org.netbeans.swing.etable.ETableColumnModel
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scalaz._, Scalaz._, scalaz.effect.IO
 
 final class OutlineNb(
@@ -39,8 +39,8 @@ final class OutlineNb(
   def columns: IO[List[(TableColumn,Boolean)]] = IO{
     val field = classOf[ETableColumnModel].getDeclaredField("hiddenColumns")
     field.setAccessible(true)
-    val cs = field.get(model).asInstanceOf[JList[TableColumn]].toList
-    (cs ::: model.getColumns.toList) map (c ⇒ (c, model isColumnHidden c))
+    val cs = field.get(model).asInstanceOf[JList[TableColumn]].asScala.toList
+    (cs ::: model.getColumns.asScala.toList) map (c ⇒ (c, model isColumnHidden c))
   }
 
   def selectedColumns: SIn[List[String]] = SF cachedSrc this
@@ -50,7 +50,7 @@ final class OutlineNb(
 
   def columnNames = outline.getColumnModel match {
     case etcm: ETableColumnModel ⇒ {
-        etcm.getColumns.toList map (_.getHeaderValue.toString)
+        etcm.getColumns.asScala.toList map (_.getHeaderValue.toString)
       }
     case _ ⇒ Nil
   }
@@ -148,10 +148,10 @@ object OutlineNb {
       res ← IO {
               val o = new OutlineNb(new Peer(ov, rootNode, pl), localizations)
               o.peer.actionMap.put("EnlargeAction", 
-                efa.nb.action(""){o.enlarge.unsafePerformIO})
+                efa.nb.action("")(o.enlarge))
 
               o.peer.actionMap.put("ReduceAction", 
-                efa.nb.action(""){o.reduce.unsafePerformIO})
+                efa.nb.action("")(o.reduce))
 
               o
             }

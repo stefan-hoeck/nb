@@ -18,8 +18,8 @@ package object nb {
 
   lazy val NbSystem = ReactiveSystem(reactiveLog).unsafePerformIO()
 
-  def action(name: String)(run: () ⇒ Unit): Action = new AbstractAction(name) {
-    override def actionPerformed(e: java.awt.event.ActionEvent) { run() }
+  def action(name: String)(run: scalaz.effect.IO[Unit]): Action = new AbstractAction(name) {
+    override def actionPerformed(e: java.awt.event.ActionEvent) { run.unsafePerformIO() }
   }
 
   private final val EnableLogging = "NbSystem.loggingEnabled"

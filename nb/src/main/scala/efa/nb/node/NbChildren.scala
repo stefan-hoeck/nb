@@ -10,19 +10,19 @@ final class NbChildren private() extends Children.Keys[NodeSetter] {
 
   override def createNodes (ns: NodeSetter) = Array(NbNode createIO ns)
 
-  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters._
 
   override protected def addNotify() {
     if (!addNotified) {
       addNotified = true
-      setKeys(seq)
+      setKeys(seq.toArray)
     }
   }
 
   private[node] def set (np: FullInfo): IO[Unit] = IO {
     map = np._1
     seq = np._2
-    if (addNotified) setKeys (seq)
+    if (addNotified) setKeys (seq.toArray)
   }
 
   private[this] var addNotified = false
@@ -57,7 +57,7 @@ trait NbChildrenFunctions {
   //and a SourceMap
   //Side effects are a possibility, since some of the nodes
   //might be adjusted during creation of the SourceSeq
-  type Factory[-A,+B] = (Out[B], A, SetterMap) ⇒ IO[SetterInfo]
+  type Factory[-A,B] = (Out[B], A, SetterMap) ⇒ IO[SetterInfo]
 
   //Maps and Int-Index to a OutSourceMap
   type FullMap = Map[Int, SetterMap]
